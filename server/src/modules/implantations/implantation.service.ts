@@ -85,6 +85,9 @@ async function create(data: CreateImplantationInput, actor: Actor) {
       ...toPersistedCredentials(rest),
       // O dono é sempre a sessão autenticada, nunca um id arbitrário enviado pelo cliente.
       responsibleUserId: actor.id,
+      // Quem abre a solicitação normalmente é quem vai conduzir a
+      // implantação. O painel ainda permite redistribuí-la depois.
+      implanterId: actor.id,
       instanceName,
       instanceBaseUrl,
       planId: plan.id,
