@@ -5,6 +5,7 @@ on:
     workflows: [CI]
     types: [completed]
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -14,10 +15,15 @@ jobs:
     steps:
       - name: SSH and deploy
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          # Conteúdo de server/.env sem DATABASE_URL, REDIS_URL e FRONTEND_URL.
+          # Nunca é escrito no repositório; só é entregue à primeira instalação.
+          DEPLOY_SERVER_ENV: ${{ secrets.DEPLOY_SERVER_ENV }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: DEPLOY_SERVER_ENV
           script: |
             set -e
 
@@ -37,11 +43,58 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            if [ ! -f .env.local ] || [ ! -f server/.env ]; then
-              echo "Faltam .env.local e/ou server/.env em $DEPLOY_PATH — crie-os manualmente" \
-                   "(nunca ficam no git) antes do primeiro deploy. Abortando."
+            # O template do backend fica como Secret do GitHub, nunca no git. Os
+            # endpoints locais e as senhas de banco são criados/atualizados aqui,
+            # pois pertencem exclusivamente a este servidor.
+            if [ ! -s server/.env ]; then
+              if [ -z "$DEPLOY_SERVER_ENV" ]; then
+                echo "Falta o secret DEPLOY_SERVER_ENV para a primeira instalação."
+                exit 1
+              fi
+              umask 077
+              printf '%s\n' "$DEPLOY_SERVER_ENV" > server/.env
+            fi
+
+            if [ ! -s .env.compose ]; then
+              umask 077
+              POSTGRES_PASSWORD="$(openssl rand -hex 32)"
+              REDIS_PASSWORD="$(openssl rand -hex 32)"
+              cat > .env.compose <<EOF
+            POSTGRES_USER=unico_implantacao
+            POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+            POSTGRES_DB=unico_implantacao
+            REDIS_PASSWORD=$REDIS_PASSWORD
+            EOF
+            fi
+
+            set -a
+            . ./.env.compose
+            set +a
+
+            # Valores gerados no host: são estáveis entre deploys e não podem
+            # aparecer no bundle do frontend nem nos logs do Actions.
+            sed -i '/^DATABASE_URL=/d; /^REDIS_URL=/d; /^FRONTEND_URL=/d' server/.env
+            {
+              printf 'DATABASE_URL=postgresql://%s:%s@127.0.0.1:5433/%s?schema=public\n' \
+                "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_DB"
+              printf 'REDIS_URL=redis://:%s@127.0.0.1:6379\n' "$REDIS_PASSWORD"
+              printf 'FRONTEND_URL=http://%s:3000\n' "${{ secrets.DEPLOY_HOST }}"
+            } >> server/.env
+
+            JWT_SECRET="$(sed -n 's/^JWT_SECRET=//p' server/.env | tail -n 1)"
+            if [ -z "$JWT_SECRET" ]; then
+              echo "JWT_SECRET ausente em server/.env."
               exit 1
             fi
+
+            umask 077
+            cat > .env.local <<EOF
+            NEXT_PUBLIC_API_BASE_URL=http://${{ secrets.DEPLOY_HOST }}:4000
+            JWT_SECRET=$JWT_SECRET
+            EOF
+
+            docker compose --env-file .env.compose up -d postgres redis
+            docker compose ps
 
             npm ci
             npm run build
@@ -50,11 +103,15 @@ jobs:
             npm ci
             npx prisma migrate deploy
             npm run build
+            npm run seed:admin
             cd ..
 
             # Ajuste os nomes dos processos conforme o que já roda no servidor
             # (esses comandos assumem pm2 — troque se o deploy usa outra coisa).
-            pm2 restart unico-implantacao-web    || pm2 start npm --name unico-implantacao-web    --cwd "$DEPLOY_PATH"        -- run start
-            pm2 restart unico-implantacao-api    || pm2 start npm --name unico-implantacao-api    --cwd "$DEPLOY_PATH/server" -- run start
-            pm2 restart unico-implantacao-worker || pm2 start npm --name unico-implantacao-worker --cwd "$DEPLOY_PATH/server" -- run start:worker
+            pm2 restart unico-implantacao-web    --update-env || pm2 start npm --name unico-implantacao-web    --cwd "$DEPLOY_PATH"        -- run start
+            pm2 restart unico-implantacao-api    --update-env || pm2 start npm --name unico-implantacao-api    --cwd "$DEPLOY_PATH/server" -- run start
+            pm2 restart unico-implantacao-worker --update-env || pm2 start npm --name unico-implantacao-worker --cwd "$DEPLOY_PATH/server" -- run start:worker
             pm2 save
+
+            curl --fail --silent --show-error --retry 5 --retry-connrefused http://127.0.0.1:4000/health
+            curl --fail --silent --show-error --retry 5 --retry-connrefused --head http://127.0.0.1:3000/
