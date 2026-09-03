@@ -2,6 +2,8 @@ import type { AdminUser } from "@prisma/client";
 import { AppError, UnauthorizedError } from "../../lib/errors";
 import { prisma } from "../../lib/prisma";
 import { hashPassword, signSessionToken, verifyPassword } from "../../lib/auth";
+import { AUDIT_ACTIONS } from "../audit-logs/audit-log.constants";
+import { auditLogService } from "../audit-logs/audit-log.service";
 import type { loginSchema, updateProfileSchema } from "./auth.schema";
 import type { z } from "zod";
 
@@ -24,6 +26,14 @@ async function login(data: z.infer<typeof loginSchema>) {
   });
 
   const token = signSessionToken({ sub: updated.id, role: updated.role });
+
+  await auditLogService.record({
+    actor: updated,
+    action: AUDIT_ACTIONS.USER_LOGGED_IN,
+    entityType: "AdminUser",
+    entityId: updated.id,
+  });
+
   return { token, user: toSafeUser(updated) };
 }
 

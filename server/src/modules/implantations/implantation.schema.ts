@@ -24,7 +24,12 @@ export const createImplantationSchema = z.object({
 
 export const updateImplantationSchema = createImplantationSchema
   .omit({ instanceUrl: true, planId: true })
-  .partial();
+  .partial()
+  .extend({
+    // Quem de fato conduziu a implantação — distinto de `responsibleUserId`.
+    // `null` limpa a atribuição; ausente não mexe no valor atual.
+    implanterId: z.string().nullable().optional(),
+  });
 
 export type CreateImplantationInput = z.infer<typeof createImplantationSchema>;
 export type UpdateImplantationInput = z.infer<typeof updateImplantationSchema>;

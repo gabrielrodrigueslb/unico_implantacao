@@ -71,6 +71,18 @@ export function UserFormSheet({
     setError(null);
   }
 
+  // Recarrega o formulário toda vez que o sheet abre — ajuste de estado
+  // durante o render (não em efeito), como no UserFormDialog do onboarding.
+  // Sem isso, o `useState` acima só lê `editingUser` na primeira montagem:
+  // como este componente já existe na árvore com `editingUser` nulo (a
+  // tabela só troca a prop depois), editar sempre mostraria o formulário
+  // vazio em vez dos dados do usuário clicado.
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (open) reset();
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (!editingUser && !isStrongPassword(password)) {
@@ -164,7 +176,7 @@ export function UserFormSheet({
               <Label htmlFor="user-role">Perfil</Label>
               <Select value={role} onValueChange={(value) => setRole(value as AdminRole)}>
                 <SelectTrigger id="user-role" className="w-full">
-                  <SelectValue />
+                  <SelectValue>{(value: AdminRole) => ADMIN_ROLE_LABELS[value]}</SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {(Object.keys(ADMIN_ROLE_LABELS) as AdminRole[]).map((value) => (

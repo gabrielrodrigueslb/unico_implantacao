@@ -9,24 +9,24 @@ async function list(_req: Request, res: Response) {
 
 async function create(req: Request, res: Response) {
   const data = createUserSchema.parse(req.body);
-  const user = await userService.create(data);
+  const user = await userService.create(data, req.user!);
   return res.status(201).json(user);
 }
 
 async function update(req: Request, res: Response) {
   const data = updateUserSchema.parse(req.body);
-  const user = await userService.update(req.params.id, data);
+  const user = await userService.update(req.params.id, data, req.user!);
   return res.json(user);
 }
 
 async function resetPassword(req: Request, res: Response) {
   const data = resetPasswordSchema.parse(req.body);
-  const user = await userService.resetPassword(req.params.id, data);
+  const user = await userService.resetPassword(req.params.id, data, req.user!);
   return res.json(user);
 }
 
 async function remove(req: Request, res: Response) {
-  await userService.remove(req.params.id, req.user!.id);
+  await userService.remove(req.params.id, req.user!);
   return res.status(204).send();
 }
 

@@ -5,12 +5,15 @@ import { userController } from "./user.controller";
 
 export const userRoutes = Router();
 
-// CRUD de contas do painel administrativo — só ADMIN gerencia outros
-// usuários (ver AdminRole em schema.prisma).
-userRoutes.use(requireAuth, requireAdmin);
+userRoutes.use(requireAuth);
 
+// Listar é liberado pra qualquer sessão autenticada — é o que alimenta o
+// seletor de "implantador" na tela de implantação, que qualquer um usa. As
+// ações que de fato mudam uma conta continuam só pra ADMIN (ver AdminRole
+// em schema.prisma).
 userRoutes.get("/", asyncHandler(userController.list));
-userRoutes.post("/", asyncHandler(userController.create));
-userRoutes.put("/:id", asyncHandler(userController.update));
-userRoutes.post("/:id/reset-password", asyncHandler(userController.resetPassword));
-userRoutes.delete("/:id", asyncHandler(userController.remove));
+
+userRoutes.post("/", requireAdmin, asyncHandler(userController.create));
+userRoutes.put("/:id", requireAdmin, asyncHandler(userController.update));
+userRoutes.post("/:id/reset-password", requireAdmin, asyncHandler(userController.resetPassword));
+userRoutes.delete("/:id", requireAdmin, asyncHandler(userController.remove));

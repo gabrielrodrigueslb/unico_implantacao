@@ -1,4 +1,5 @@
 import type {
+  ActivityEvent,
   DeploymentJobType,
   DeploymentRun,
   Implantation,
@@ -96,6 +97,43 @@ export async function createImplantation(
     const body = await response.json().catch(() => null);
     throw new Error(body?.message ?? "Não foi possível criar a implantação");
   }
+  return response.json();
+}
+
+export interface UpdateImplantationInput {
+  companyName?: string;
+  cnpj?: string;
+  /** `null` limpa a atribuição. */
+  implanterId?: string | null;
+}
+
+export async function updateImplantation(
+  id: string,
+  data: UpdateImplantationInput,
+): Promise<Implantation> {
+  const response = await fetch(`${API_BASE_URL}/implantations/${id}`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.message ?? "Não foi possível salvar a implantação");
+  }
+  return response.json();
+}
+
+export async function fetchActivity(
+  id: string,
+  headers?: HeadersInit,
+): Promise<ActivityEvent[]> {
+  const response = await fetch(`${API_BASE_URL}/implantations/${id}/activity`, {
+    credentials: "include",
+    headers,
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error("Não foi possível carregar o histórico de atividade");
   return response.json();
 }
 

@@ -27,6 +27,9 @@ export interface Implantation {
   instanceName: string;
   instanceBaseUrl: string;
   responsibleUserId: string | null;
+  /** Quem de fato conduziu a implantação — distinto de `responsibleUserId` (quem criou o registro). */
+  implanterId: string | null;
+  implanter: { id: string; name: string } | null;
   status: ImplantationStatus;
   onboardingToken: string;
   planId: number | null;
@@ -117,4 +120,16 @@ export interface DeploymentRun {
   startedAt: string;
   completedAt: string | null;
   jobs: DeploymentJob[];
+}
+
+/** Evento da timeline da aba "Atividade" — ver GET /implantations/:id/activity. */
+export interface ActivityEvent {
+  id: string;
+  at: string;
+  kind: "audit" | "deployment_run" | "deployment_job";
+  /** Ação de auditoria (kind="audit") ou `DeploymentJobType` (kind="deployment_job") — mapear para rótulo pt-BR na UI. */
+  label: string;
+  actorName: string | null;
+  status?: string;
+  metadata?: unknown;
 }

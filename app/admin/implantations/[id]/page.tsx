@@ -4,16 +4,20 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SiteHeader } from "@/components/site-header"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
+  fetchActivity,
   fetchDeploymentRun,
   fetchImplantation,
   fetchReview,
   onboardingLink,
 } from "@/features/implantations/api"
 import { implantationUserQuotas } from "@/features/implantations/types"
+import { ActivityTimeline } from "@/features/implantations/components/ActivityTimeline"
 import { ApproveCard } from "@/features/implantations/components/ApproveCard"
 import { CopyLinkButton } from "@/features/implantations/components/CopyLinkButton"
 import { DeploymentRunPanel } from "@/features/implantations/components/DeploymentRunPanel"
+import { ImplanterField } from "@/features/implantations/components/ImplanterField"
 import { OnboardingReview } from "@/features/implantations/components/OnboardingReview"
 import { ReviewEditor } from "@/features/implantations/components/ReviewEditor"
 import { RunStatusPoller } from "@/features/implantations/components/RunStatusPoller"
@@ -21,6 +25,7 @@ import { StatusBadge } from "@/features/implantations/components/StatusBadge"
 import { mergeOnboardingData } from "@/features/implantations/onboarding-merge"
 import type { OnboardingData } from "@/features/onboarding/types"
 import { fetchMe } from "@/features/auth/api"
+import { fetchUsers } from "@/features/users/api"
 import { getAuthHeaders } from "@/lib/server-session"
 import { ArrowLeftIcon, ExternalLinkIcon, GlobeIcon } from "lucide-react"
 
@@ -34,9 +39,11 @@ export default async function ImplantationDetailPage({
   const [implantation, user] = await Promise.all([fetchImplantation(id, headers), fetchMe(headers)])
   if (!implantation) notFound()
 
-  const [review, run] = await Promise.all([
+  const [review, run, activity, panelUsers] = await Promise.all([
     fetchReview(id, headers),
     fetchDeploymentRun(id, headers),
+    fetchActivity(id, headers),
+    fetchUsers(headers),
   ])
 
   const rawResponses = (review?.reviewedResponses ?? review?.clientResponses ?? null) as Partial<OnboardingData> | null
@@ -119,41 +126,56 @@ export default async function ImplantationDetailPage({
                     <Badge variant="secondary">Ajustadas pelo implantador</Badge>
                   </div>
                 )}
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground">Implantador</span>
+                  <ImplanterField
+                    implantationId={implantation.id}
+                    implanterId={implantation.implanterId}
+                    users={panelUsers}
+                  />
+                </div>
               </CardContent>
             </Card>
           </div>
 
-          {run && (
-            <div className="px-4 lg:px-6">
-              <DeploymentRunPanel implantationId={implantation.id} run={run} />
-            </div>
-          )}
-
-          {isEditable && (
-            <div className="px-4 lg:px-6">
-              <ApproveCard implantationId={implantation.id} approverName={user.name} />
-            </div>
-          )}
-
           <div className="px-4 lg:px-6">
-            {responses ? (
-              isEditable ? (
-                <ReviewEditor
-                  implantationId={implantation.id}
-                  initialData={responses}
-                  userQuotas={implantationUserQuotas(implantation)}
-                />
-              ) : (
-                <OnboardingReview data={responses} />
-              )
-            ) : (
-              <Card>
-                <CardContent className="py-8 text-center text-sm text-muted-foreground">
-                  O cliente ainda não enviou o onboarding — assim que enviar, os dados aparecem
-                  aqui para revisão.
-                </CardContent>
-              </Card>
-            )}
+            <Tabs defaultValue="overview">
+              <TabsList>
+                <TabsTrigger value="overview">Visão geral</TabsTrigger>
+                <TabsTrigger value="activity">Atividade</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="overview" className="flex flex-col gap-4">
+                {run && <DeploymentRunPanel implantationId={implantation.id} run={run} />}
+
+                {isEditable && (
+                  <ApproveCard implantationId={implantation.id} approverName={user.name} />
+                )}
+
+                {responses ? (
+                  isEditable ? (
+                    <ReviewEditor
+                      implantationId={implantation.id}
+                      initialData={responses}
+                      userQuotas={implantationUserQuotas(implantation)}
+                    />
+                  ) : (
+                    <OnboardingReview data={responses} />
+                  )
+                ) : (
+                  <Card>
+                    <CardContent className="py-8 text-center text-sm text-muted-foreground">
+                      O cliente ainda não enviou o onboarding — assim que enviar, os dados
+                      aparecem aqui para revisão.
+                    </CardContent>
+                  </Card>
+                )}
+              </TabsContent>
+
+              <TabsContent value="activity">
+                <ActivityTimeline events={activity} />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
     </>

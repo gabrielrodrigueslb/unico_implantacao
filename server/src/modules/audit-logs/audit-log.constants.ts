@@ -1,0 +1,21 @@
+/**
+ * Catálogo fechado de ações registradas em auditoria — mantém o valor salvo
+ * em `AuditLog.action` consistente entre quem grava (services) e quem lê
+ * (frontend, para rotular). Adicionar uma ação nova é só acrescentar aqui.
+ */
+export const AUDIT_ACTIONS = {
+  IMPLANTATION_CREATED: "IMPLANTATION_CREATED",
+  IMPLANTATION_UPDATED: "IMPLANTATION_UPDATED",
+  IMPLANTATION_REVIEW_UPDATED: "IMPLANTATION_REVIEW_UPDATED",
+  IMPLANTATION_APPROVED: "IMPLANTATION_APPROVED",
+  IMPLANTATION_CANCELLED: "IMPLANTATION_CANCELLED",
+  IMPLANTATION_IMPLANTER_ASSIGNED: "IMPLANTATION_IMPLANTER_ASSIGNED",
+  DEPLOYMENT_JOB_RETRIED: "DEPLOYMENT_JOB_RETRIED",
+  USER_CREATED: "USER_CREATED",
+  USER_UPDATED: "USER_UPDATED",
+  USER_PASSWORD_RESET: "USER_PASSWORD_RESET",
+  USER_DELETED: "USER_DELETED",
+  USER_LOGGED_IN: "USER_LOGGED_IN",
+} as const;
+
+export type AuditAction = (typeof AUDIT_ACTIONS)[keyof typeof AUDIT_ACTIONS];

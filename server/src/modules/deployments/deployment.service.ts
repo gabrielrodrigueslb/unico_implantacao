@@ -2,11 +2,15 @@ import { prisma } from "../../lib/prisma";
 import { ConflictError, NotFoundError } from "../../lib/errors";
 import { deploymentQueue } from "../../jobs/deployment.queue";
 import { implantationAccessWhere, type AuthenticatedUser } from "../../lib/access-control";
+import { AUDIT_ACTIONS } from "../audit-logs/audit-log.constants";
+import { auditLogService } from "../audit-logs/audit-log.service";
 import {
   DEPLOYMENT_JOB_TYPES,
   JOB_DEPENDENCIES,
   type DeploymentJobType,
 } from "./deployment.types";
+
+type Actor = AuthenticatedUser & { name: string };
 
 async function startRun(implantationId: string, snapshotId: string) {
   const run = await prisma.deploymentRun.create({
@@ -127,8 +131,8 @@ async function getLatestRun(implantationId: string, user: AuthenticatedUser) {
   return run;
 }
 
-async function retryJob(implantationId: string, type: DeploymentJobType, user: AuthenticatedUser) {
-  const run = await getLatestRun(implantationId, user);
+async function retryJob(implantationId: string, type: DeploymentJobType, actor: Actor) {
+  const run = await getLatestRun(implantationId, actor);
   const job = run.jobs.find((j) => j.type === type);
 
   if (!job) {
@@ -162,6 +166,14 @@ async function retryJob(implantationId: string, type: DeploymentJobType, user: A
   await prisma.implantation.update({
     where: { id: implantationId },
     data: { status: "RUNNING", completedAt: null },
+  });
+
+  await auditLogService.record({
+    actor,
+    action: AUDIT_ACTIONS.DEPLOYMENT_JOB_RETRIED,
+    entityType: "Implantation",
+    entityId: implantationId,
+    metadata: { jobType: type },
   });
 
   return updatedJob;
