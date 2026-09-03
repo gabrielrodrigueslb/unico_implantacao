@@ -46,4 +46,18 @@ async function rotateOnboardingToken(req: Request, res: Response) {
   return res.json(token);
 }
 
-export const implantationController = { create, list, stats, getById, update, cancel, rotateOnboardingToken };
+async function activity(req: Request, res: Response) {
+  const events = await implantationService.activity(req.params.id, req.user!);
+  return res.json(events);
+}
+
+export const implantationController = {
+  create,
+  list,
+  stats,
+  getById,
+  update,
+  cancel,
+  rotateOnboardingToken,
+  activity,
+};

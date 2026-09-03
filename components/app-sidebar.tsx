@@ -19,6 +19,7 @@ import type { AdminUser } from "@/features/auth/types"
 import {
   LayoutDashboardIcon,
   ListChecksIcon,
+  ShieldCheckIcon,
   UsersIcon,
 } from "lucide-react"
 
@@ -35,19 +36,27 @@ const baseNavMain = [
   },
 ]
 
-const usersNavItem = {
-  title: "Usuários",
-  url: "/admin/users",
-  icon: <UsersIcon />,
-}
+const adminOnlyNavItems = [
+  {
+    title: "Usuários",
+    url: "/admin/users",
+    icon: <UsersIcon />,
+  },
+  {
+    title: "Auditoria",
+    url: "/admin/audit-logs",
+    icon: <ShieldCheckIcon />,
+  },
+]
 
 export function AppSidebar({
   user,
   ...props
 }: React.ComponentProps<typeof Sidebar> & { user: AdminUser }) {
-  // Gestão de usuários é só para ADMIN — a API já recusa (403) pra MEMBER,
-  // isto só evita levar quem não pode gerenciar até uma página vazia.
-  const navMain = user.role === "ADMIN" ? [...baseNavMain, usersNavItem] : baseNavMain
+  // Gestão de usuários e auditoria são só para ADMIN — a API já recusa
+  // (403/visão restrita) pra MEMBER, isto só evita levar quem não pode
+  // gerenciar até uma página vazia.
+  const navMain = user.role === "ADMIN" ? [...baseNavMain, ...adminOnlyNavItems] : baseNavMain
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>

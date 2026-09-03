@@ -3,6 +3,10 @@ import { prisma } from "../../lib/prisma";
 import { ConflictError, NotFoundError } from "../../lib/errors";
 import { deploymentService } from "../deployments/deployment.service";
 import { implantationAccessWhere, type AuthenticatedUser } from "../../lib/access-control";
+import { AUDIT_ACTIONS } from "../audit-logs/audit-log.constants";
+import { auditLogService } from "../audit-logs/audit-log.service";
+
+type Actor = AuthenticatedUser & { name: string };
 
 async function findImplantationWithOnboarding(implantationId: string, user: AuthenticatedUser) {
   const implantation = await prisma.implantation.findFirst({
@@ -40,9 +44,9 @@ async function getReview(implantationId: string, user: AuthenticatedUser) {
 
 async function updateReviewResponses(
   implantationId: string,
-  responses: Record<string, unknown>, user: AuthenticatedUser,
+  responses: Record<string, unknown>, actor: Actor,
 ) {
-  const implantation = await findImplantationWithOnboarding(implantationId, user);
+  const implantation = await findImplantationWithOnboarding(implantationId, actor);
 
   if (implantation.status !== "WAITING_REVIEW") {
     throw new ConflictError(
@@ -50,14 +54,23 @@ async function updateReviewResponses(
     );
   }
 
-  return prisma.onboarding.update({
+  const onboarding = await prisma.onboarding.update({
     where: { implantationId },
     data: { reviewedResponses: responses as Prisma.InputJsonValue },
   });
+
+  await auditLogService.record({
+    actor,
+    action: AUDIT_ACTIONS.IMPLANTATION_REVIEW_UPDATED,
+    entityType: "Implantation",
+    entityId: implantationId,
+  });
+
+  return onboarding;
 }
 
-async function approve(implantationId: string, approvedBy: string, user: AuthenticatedUser) {
-  const implantation = await findImplantationWithOnboarding(implantationId, user);
+async function approve(implantationId: string, approvedBy: string, actor: Actor) {
+  const implantation = await findImplantationWithOnboarding(implantationId, actor);
 
   if (implantation.status !== "WAITING_REVIEW") {
     throw new ConflictError(
@@ -91,6 +104,14 @@ async function approve(implantationId: string, approvedBy: string, user: Authent
 
   // "Aprovar e iniciar implantação" é uma ação única: aprovar já dispara a automação.
   await deploymentService.startRun(implantationId, snapshot.id);
+
+  await auditLogService.record({
+    actor,
+    action: AUDIT_ACTIONS.IMPLANTATION_APPROVED,
+    entityType: "Implantation",
+    entityId: implantationId,
+    metadata: { snapshotVersion: nextVersion },
+  });
 
   return snapshot;
 }

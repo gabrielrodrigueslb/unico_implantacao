@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import { env } from "./config/env";
 import { AppError } from "./lib/errors";
 import { requireAuth } from "./middleware/auth.middleware";
+import { auditLogRoutes } from "./modules/audit-logs/audit-log.routes";
 import { authRoutes } from "./modules/auth/auth.routes";
 import { deploymentRoutes } from "./modules/deployments/deployment.routes";
 import { implantationRoutes } from "./modules/implantations/implantation.routes";
@@ -34,6 +35,8 @@ app.use("/implantations", requireAuth, implantationRoutes);
 app.use("/onboarding", onboardingRoutes);
 app.use("/deployments", requireAuth, deploymentRoutes);
 app.use("/plans", requireAuth, plansRoutes);
+// Busca global de auditoria — só ADMIN (ver requireAdmin dentro do router).
+app.use("/audit-logs", requireAuth, auditLogRoutes);
 
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: "Rota não encontrada" });

@@ -1,4 +1,4 @@
-import type { Implantation, Prisma } from "@prisma/client";
+import type { AdminUser, Implantation, Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { AppError, NotFoundError } from "../../lib/errors";
 import { encryptSecret } from "../../lib/crypto";
@@ -6,18 +6,26 @@ import { fetchAvailablePlans } from "../../integrations/atender-bem/partner-clie
 import { parseInstanceUrl } from "./instance-url";
 import { implantationAccessWhere, type AuthenticatedUser } from "../../lib/access-control";
 import { onboardingTokenExpiresAt } from "../onboarding/onboarding.service";
+import { AUDIT_ACTIONS } from "../audit-logs/audit-log.constants";
+import { auditLogService } from "../audit-logs/audit-log.service";
 import type {
   CreateImplantationInput,
   ListImplantationsQuery,
   UpdateImplantationInput,
 } from "./implantation.schema";
 
+type Actor = AuthenticatedUser & { name: string };
+
+const implanterSelect = { implanter: { select: { id: true, name: true } } } satisfies Prisma.ImplantationInclude;
+
+type ImplantationWithImplanter = Implantation & { implanter: Pick<AdminUser, "id" | "name"> | null };
+
 /**
  * Nunca devolver a conta de serviço pela API — nem username, nem os campos
  * cifrados. `credentialsConfigured` é o suficiente para a interface saber
  * se falta cadastrar antes de aprovar.
  */
-function sanitize(implantation: Implantation) {
+function sanitize(implantation: ImplantationWithImplanter) {
   const {
     serviceUsername: _serviceUsername,
     servicePasswordEncrypted: _servicePasswordEncrypted,
@@ -52,7 +60,7 @@ function toPersistedCredentials<
   };
 }
 
-async function create(data: CreateImplantationInput, user: AuthenticatedUser) {
+async function create(data: CreateImplantationInput, actor: Actor) {
   const { instanceUrl, planId, ...rest } = data;
 
   let instanceName: string;
@@ -73,7 +81,7 @@ async function create(data: CreateImplantationInput, user: AuthenticatedUser) {
     data: {
       ...toPersistedCredentials(rest),
       // O dono é sempre a sessão autenticada, nunca um id arbitrário enviado pelo cliente.
-      responsibleUserId: user.id,
+      responsibleUserId: actor.id,
       instanceName,
       instanceBaseUrl,
       planId: plan.id,
@@ -84,6 +92,15 @@ async function create(data: CreateImplantationInput, user: AuthenticatedUser) {
       status: "ONBOARDING_PENDING",
       onboardingTokenExpiresAt: onboardingTokenExpiresAt(),
     },
+    include: implanterSelect,
+  });
+
+  await auditLogService.record({
+    actor,
+    action: AUDIT_ACTIONS.IMPLANTATION_CREATED,
+    entityType: "Implantation",
+    entityId: implantation.id,
+    metadata: { instanceName, companyName: implantation.companyName },
   });
 
   return sanitize(implantation);
@@ -117,6 +134,7 @@ async function list(query: ListImplantationsQuery, user: AuthenticatedUser) {
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
+      include: implanterSelect,
     }),
     prisma.implantation.count({ where }),
   ]);
@@ -163,6 +181,7 @@ async function stats(user: AuthenticatedUser) {
 async function getById(id: string, user: AuthenticatedUser) {
   const implantation = await prisma.implantation.findFirst({
     where: { AND: [{ id }, implantationAccessWhere(user)] },
+    include: implanterSelect,
   });
 
   if (!implantation) {
@@ -179,26 +198,137 @@ async function getByIdForWorker(id: string) {
   return implantation;
 }
 
-async function update(id: string, data: UpdateImplantationInput, user: AuthenticatedUser) {
-  await getById(id, user);
+async function update(id: string, data: UpdateImplantationInput, actor: Actor) {
+  const before = await getById(id, actor);
+
+  const { implanterId, ...otherChanges } = data;
 
   const implantation = await prisma.implantation.update({
     where: { id },
-    data: toPersistedCredentials(data),
+    data: toPersistedCredentials({ ...otherChanges, ...(implanterId !== undefined ? { implanterId } : {}) }),
+    include: implanterSelect,
+  });
+
+  if (implanterId !== undefined) {
+    await auditLogService.record({
+      actor,
+      action: AUDIT_ACTIONS.IMPLANTATION_IMPLANTER_ASSIGNED,
+      entityType: "Implantation",
+      entityId: id,
+      metadata: {
+        previousImplanterName: before.implanter?.name ?? null,
+        newImplanterName: implantation.implanter?.name ?? null,
+      },
+    });
+  }
+
+  if (Object.keys(otherChanges).length > 0) {
+    await auditLogService.record({
+      actor,
+      action: AUDIT_ACTIONS.IMPLANTATION_UPDATED,
+      entityType: "Implantation",
+      entityId: id,
+      metadata: { changedFields: Object.keys(otherChanges) },
+    });
+  }
+
+  return sanitize(implantation);
+}
+
+async function cancel(id: string, actor: Actor) {
+  await getById(id, actor);
+
+  const implantation = await prisma.implantation.update({
+    where: { id },
+    data: { status: "CANCELLED" },
+    include: implanterSelect,
+  });
+
+  await auditLogService.record({
+    actor,
+    action: AUDIT_ACTIONS.IMPLANTATION_CANCELLED,
+    entityType: "Implantation",
+    entityId: id,
   });
 
   return sanitize(implantation);
 }
 
-async function cancel(id: string, user: AuthenticatedUser) {
+export interface ActivityEvent {
+  id: string;
+  at: Date;
+  kind: "audit" | "deployment_run" | "deployment_job";
+  label: string;
+  actorName: string | null;
+  status?: string;
+  metadata?: unknown;
+}
+
+/**
+ * Timeline única da implantação para a aba "Atividade": ações registradas
+ * em auditoria (criada, aprovada, cancelada, implantador atribuído...) e o
+ * andamento de cada etapa da automação em todas as execuções (inclusive
+ * reprocessamentos). Implantações criadas antes deste recurso simplesmente
+ * não têm o evento "criada" — não tentamos reconstruir histórico que nunca
+ * foi gravado.
+ */
+async function activity(id: string, user: AuthenticatedUser): Promise<ActivityEvent[]> {
   await getById(id, user);
 
-  const implantation = await prisma.implantation.update({
-    where: { id },
-    data: { status: "CANCELLED" },
-  });
+  const [logs, runs] = await Promise.all([
+    auditLogService.listForEntity("Implantation", id),
+    prisma.deploymentRun.findMany({
+      where: { implantationId: id },
+      orderBy: { createdAt: "asc" },
+      include: { jobs: true },
+    }),
+  ]);
 
-  return sanitize(implantation);
+  const events: ActivityEvent[] = logs.map((log) => ({
+    id: log.id,
+    at: log.createdAt,
+    kind: "audit",
+    label: log.action,
+    actorName: log.actorName,
+    metadata: log.metadata,
+  }));
+
+  for (const run of runs) {
+    events.push({
+      id: `${run.id}-start`,
+      at: run.startedAt,
+      kind: "deployment_run",
+      label: "Execução da automação iniciada",
+      actorName: null,
+      status: "RUNNING",
+    });
+
+    for (const job of run.jobs) {
+      if (!job.startedAt) continue;
+      events.push({
+        id: job.id,
+        at: job.finishedAt ?? job.startedAt,
+        kind: "deployment_job",
+        label: job.type,
+        actorName: null,
+        status: job.status,
+        metadata: { attempts: job.attempts, error: job.error },
+      });
+    }
+
+    if (run.completedAt) {
+      events.push({
+        id: `${run.id}-end`,
+        at: run.completedAt,
+        kind: "deployment_run",
+        label: "Execução da automação concluída",
+        actorName: null,
+        status: run.status,
+      });
+    }
+  }
+
+  return events.sort((a, b) => b.at.getTime() - a.at.getTime());
 }
 
 export const implantationService = {
@@ -209,4 +339,5 @@ export const implantationService = {
   getByIdForWorker,
   update,
   cancel,
+  activity,
 };
