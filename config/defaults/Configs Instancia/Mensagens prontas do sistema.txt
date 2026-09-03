@@ -1,0 +1,87 @@
+🔵Motivos de encerramento 
+
+
+Venda concluída 
+Orçamento
+Produto fora de estoque 
+Produto não trabalhado 
+Informações
+Engano 
+Resposta ao atendimento anterior
+Outros
+
+
+🔵 Mensagem caso o cliente envie mensagem fora do horário de funcionamento
+
+
+⏱️Nosso horário de atendimento é de # às # de segunda a sexta.
+E aos sábados de # às #.
+Responderemos no próximo horário disponível.
+
+
+🔵 Mensagem caso ligue pelo whatsapp e a empresa não aceite esse tipo de ligação
+
+
+📞 Não atendemos ligações de áudio ou vídeo pelo WhatsApp, por favor envie UMA MENSAGEM que iremos te retornar!
+
+📞 No momento nosso canal de atendimento está ocupado, por favor envie uma mensagem ou aguarde que iremos te retornar.
+
+
+🔵 Mensagem caso o cliente seja encerrado automaticamente por inatividade
+
+
+Devido a falta de interatividade🤐, seu atendimento foi encerrado, mas não se preocupe, basta enviar um "Oi" para iniciar um novo atendimento.
+
+
+🔵Mensagem de encerramento do atendimento
+
+
+Agradecemos seu contato e estaremos sempre à disposição.😉
+
+
+🔵 Envio da pesquisa de qualidade do atendimento (lembrando que é enviada somente uma vez por dia)
+
+
+Para aperfeiçoar nosso atendimento, nos diga como foi a sua experiência neste atendimento?
+
+Digite 5️⃣ Muito satisfeito 😍
+Digite 4️⃣ Satisfeito 😀
+Digite 3️⃣ Indiferente 😐
+Digite 2️⃣ Insatisfeito ☹️
+Digite 1️⃣ Muito insatisfeito 😞
+
+🔵 Mensagem agradecendo a resposta da pesquisa de qualidade
+
+
+Agradecemos a colaboração. 👍
+
+
+
+Saudação : 
+
+!Saudacao! eu sou !nome!, como posso te ajudar?
+
+
+Verificar estoque :
+
+Precisamos verificar se o medicamento que você precisa está em estoque. Qual é a quantidade necessária?
+
+
+Forma de pagamento :
+
+Em qual modo de pagamento você prefere realizar uma compra? Temos opções de dinheiro, cartão de crédito e débito ou pix.
+
+
+
+
+modelo:
+
+
+nome	numero	instagram	facebook	e-mail	documento	livre1	livre2	nascimento	grupos	preferenciais	cep	país	estado	cidade	bairro	endereço	numeroendereco	complemento	comentarios	etiquetas
+
+
+
+Olá seja bem vindo(a) á *NOME DA EMPRESA*!
+
+Estou finalizando um atendimento e já darei toda a atenção que você merece, enquanto isso me diga, como posso te ajudar?
+

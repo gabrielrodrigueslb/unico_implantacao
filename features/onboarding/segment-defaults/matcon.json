@@ -1,0 +1,172 @@
+{
+  "contactTags": [
+    {
+      "name": "ACABAMENTO",
+      "bgcolor": "#8b0007",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "ARQUITETO",
+      "bgcolor": "#29bdff",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "Bombeiro Hidráulico",
+      "bgcolor": "#4b0097",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "CONSTRUTORA",
+      "bgcolor": "#25615f",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "Eletricista",
+      "bgcolor": "#ffce3a",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "MATERIAL BRUTO",
+      "bgcolor": "#9400d3",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "OBRA COMPLETA",
+      "bgcolor": "#ce9b00",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "PROFISSIONAIS DA CONSTRUÇÃO",
+      "bgcolor": "#25615f",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "REVESTIMENTOS",
+      "bgcolor": "#00752b",
+      "fgcolor": "#fff"
+    }
+  ],
+  "chatTags": [
+    {
+      "name": "Aguardando Pagamento",
+      "color": "#BFE2FF-#333-#BFE2FF",
+      "description": "",
+      "marker": "💵",
+      "priority": 3
+    },
+    {
+      "name": "Aguardando Retorno",
+      "color": "#FFCE3A-#FFF-#FFCE3A",
+      "description": "Do cliente em relação ao pedido",
+      "marker": "💵",
+      "priority": 0
+    },
+    {
+      "name": "Aguardando Transferência",
+      "color": "#29BDFF-#FFF-#29BDFF",
+      "description": "",
+      "marker": "💸",
+      "priority": 3
+    },
+    {
+      "name": "Atenção neste Atendimento",
+      "color": "#FC331C-#FFF-#E7351F",
+      "description": "Atenção ao realizar esse atendimento",
+      "marker": "✨",
+      "priority": 3
+    },
+    {
+      "name": "B.O - A Resolver",
+      "color": "#FFA486-#333-#FFA486",
+      "description": "Algo a Resolver",
+      "marker": "🤢",
+      "priority": 3
+    },
+    {
+      "name": "Cliente Impaciente",
+      "color": "#A071F2-#FFF-#956CE0",
+      "description": "",
+      "marker": "🖋️",
+      "priority": 3
+    },
+    {
+      "name": "CLIENTE INATIVO",
+      "color": "#FFFFFF-#3D474D-#E7351F",
+      "description": "",
+      "marker": "❗",
+      "priority": 0
+    },
+    {
+      "name": "Cliente respondido",
+      "color": "#00752B-#FFF-#00752B",
+      "description": "",
+      "marker": "🟢",
+      "priority": 0
+    },
+    {
+      "name": "Esperando Localização",
+      "color": "#9400D3-#FFF-#9400D3",
+      "description": "",
+      "marker": "🖨️",
+      "priority": 1
+    },
+    {
+      "name": "Ligar para o Cliente",
+      "color": "#9400D3-#FFF-#9400D3",
+      "description": "",
+      "marker": "💵",
+      "priority": 0
+    },
+    {
+      "name": "NF-e Aguardando",
+      "color": "#480097-#FFF-#480097",
+      "description": "",
+      "marker": "💵",
+      "priority": 0
+    },
+    {
+      "name": "Orçamento Feito",
+      "color": "#73FEBA-#333-#73FEBA",
+      "description": "",
+      "marker": "💵",
+      "priority": 1
+    },
+    {
+      "name": "Troca de Produto",
+      "color": "#F8F0FF-#333-#D98FFF",
+      "description": "Produtos para troca",
+      "marker": "🤮",
+      "priority": 3
+    }
+  ],
+  "quickReplies": [
+    {
+      "shortcut": "Saudação",
+      "message": "!Saudacao! eu sou !nome!, como posso te ajudar?"
+    },
+    {
+      "shortcut": "Nome completo",
+      "message": "Por favor, informe seu nome completo e endereço atual."
+    },
+    {
+      "shortcut": "Verificar estoque",
+      "message": "Precisamos verificar se o produto que você precisa está em estoque. Qual é a quantidade necessária?"
+    },
+    {
+      "shortcut": "Gostaria de receber ou retirar?",
+      "message": "Você gostaria de receber o produto em sua casa ou prefere retirá-lo na loja?"
+    },
+    {
+      "shortcut": "Forma de pagamento",
+      "message": "Em qual modo de pagamento você prefere realizar uma compra? Temos opções de dinheiro, cartão de crédito e débito ou pix."
+    },
+    {
+      "shortcut": "Pedido recebido com sucesso",
+      "message": "Seu pedido foi recebido com sucesso. Em breve, entraremos em contato para confirmar os detalhes da entrega/retirada."
+    },
+    {
+      "shortcut": "Mais informações",
+      "message": "Se você tiver alguma dúvida ou precisar de mais informações, fique à vontade para perguntar. Estamos aqui para ajudar! ."
+    }
+  ]
+}
