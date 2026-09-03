@@ -20,10 +20,28 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             set -e
-            cd "${{ secrets.DEPLOY_PATH }}"
 
+            # pm2/node vêm do nvm — uma sessão SSH não-interativa não carrega
+            # o .bashrc sozinha, então sem isso "pm2"/"npm" não são achados.
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+
+            if [ ! -d "$DEPLOY_PATH/.git" ]; then
+              echo "Repositório ainda não existe em $DEPLOY_PATH — clonando pela primeira vez."
+              git clone https://github.com/gabrielrodrigueslb/unico_implantacao.git "$DEPLOY_PATH"
+            fi
+
+            cd "$DEPLOY_PATH"
             git fetch origin main
             git reset --hard origin/main
+
+            if [ ! -f .env.local ] || [ ! -f server/.env ]; then
+              echo "Faltam .env.local e/ou server/.env em $DEPLOY_PATH — crie-os manualmente" \
+                   "(nunca ficam no git) antes do primeiro deploy. Abortando."
+              exit 1
+            fi
 
             npm ci
             npm run build
@@ -36,6 +54,7 @@ jobs:
 
             # Ajuste os nomes dos processos conforme o que já roda no servidor
             # (esses comandos assumem pm2 — troque se o deploy usa outra coisa).
-            pm2 restart unico-implantacao-web    || pm2 start npm --name unico-implantacao-web    --cwd "${{ secrets.DEPLOY_PATH }}"        -- run start
-            pm2 restart unico-implantacao-api    || pm2 start npm --name unico-implantacao-api    --cwd "${{ secrets.DEPLOY_PATH }}/server" -- run start
-            pm2 restart unico-implantacao-worker || pm2 start npm --name unico-implantacao-worker --cwd "${{ secrets.DEPLOY_PATH }}/server" -- run start:worker
+            pm2 restart unico-implantacao-web    || pm2 start npm --name unico-implantacao-web    --cwd "$DEPLOY_PATH"        -- run start
+            pm2 restart unico-implantacao-api    || pm2 start npm --name unico-implantacao-api    --cwd "$DEPLOY_PATH/server" -- run start
+            pm2 restart unico-implantacao-worker || pm2 start npm --name unico-implantacao-worker --cwd "$DEPLOY_PATH/server" -- run start:worker
+            pm2 save
