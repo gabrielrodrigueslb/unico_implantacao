@@ -1,0 +1,41 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to server
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            cd "${{ secrets.DEPLOY_PATH }}"
+
+            git fetch origin main
+            git reset --hard origin/main
+
+            npm ci
+            npm run build
+
+            cd server
+            npm ci
+            npx prisma migrate deploy
+            npm run build
+            cd ..
+
+            # Ajuste os nomes dos processos conforme o que já roda no servidor
+            # (esses comandos assumem pm2 — troque se o deploy usa outra coisa).
+            pm2 restart unico-implantacao-web    || pm2 start npm --name unico-implantacao-web    --cwd "${{ secrets.DEPLOY_PATH }}"        -- run start
+            pm2 restart unico-implantacao-api    || pm2 start npm --name unico-implantacao-api    --cwd "${{ secrets.DEPLOY_PATH }}/server" -- run start
+            pm2 restart unico-implantacao-worker || pm2 start npm --name unico-implantacao-worker --cwd "${{ secrets.DEPLOY_PATH }}/server" -- run start:worker
