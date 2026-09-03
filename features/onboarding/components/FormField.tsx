@@ -7,7 +7,7 @@ import type {
 } from "react";
 
 const fieldClasses =
-  "w-full rounded-xl border border-border-soft bg-white px-4 py-3 text-base text-brand outline-none transition-colors placeholder:text-brand/40 focus:border-accent";
+  "w-full rounded-xl border border-border-soft bg-card px-4 py-3 text-base text-brand outline-none transition-colors placeholder:text-brand/40 focus:border-accent";
 
 export function Field({
   label,
@@ -35,24 +35,51 @@ export function Field({
   );
 }
 
-export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...props} className={`${fieldClasses} ${props.className ?? ""}`} />;
+/**
+ * `autoComplete="off"` por padrão (sobrescrevível): sem isso o Chrome, ao
+ * reconhecer um campo (CNPJ, e-mail...) por heurística própria, pinta o
+ * fundo dele de branco sólido por cima do nosso CSS — o `background-color`
+ * computado até acusa a cor certa, mas o navegador desenha por cima mesmo
+ * assim. Mesma causa do bug do autocomplete de plano no admin.
+ */
+export function Input({
+  autoComplete = "off",
+  ...props
+}: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      autoComplete={autoComplete}
+      {...props}
+      className={`${fieldClasses} ${props.className ?? ""}`}
+    />
+  );
 }
 
-export function Textarea(
-  props: TextareaHTMLAttributes<HTMLTextAreaElement>,
-) {
+export function Textarea({
+  autoComplete = "off",
+  ...props
+}: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <textarea
       rows={3}
+      autoComplete={autoComplete}
       {...props}
       className={`${fieldClasses} resize-none ${props.className ?? ""}`}
     />
   );
 }
 
-export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className={`${fieldClasses} ${props.className ?? ""}`} />;
+export function Select({
+  autoComplete = "off",
+  ...props
+}: SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <select
+      autoComplete={autoComplete}
+      {...props}
+      className={`${fieldClasses} ${props.className ?? ""}`}
+    />
+  );
 }
 
 /** Campo numérico com botões de +/- ao lado, para valores curtos (contagens, limites). */
@@ -82,7 +109,7 @@ export function NumberInput({
 
   return (
     <div
-      className={`flex items-stretch overflow-hidden rounded-xl border border-border-soft bg-white transition-colors focus-within:border-accent ${className ?? ""}`}
+      className={`flex items-stretch overflow-hidden rounded-xl border border-border-soft bg-card transition-colors focus-within:border-accent ${className ?? ""}`}
     >
       <button
         type="button"
@@ -95,6 +122,7 @@ export function NumberInput({
       <input
         id={id}
         type="number"
+        autoComplete="off"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         min={min}

@@ -83,7 +83,7 @@ function TagList({
             }
           }}
           placeholder="Nome da nova etiqueta"
-          className="w-full max-w-[240px] rounded-xl border border-border-soft bg-white px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/40 focus:border-accent"
+          className="w-full max-w-[240px] rounded-xl border border-border-soft bg-card px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/40 focus:border-accent"
         />
         <button
           type="button"

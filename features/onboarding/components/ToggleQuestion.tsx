@@ -12,7 +12,7 @@ export function ToggleQuestion({
   onChange: (value: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl border border-border-soft bg-white px-4 py-3.5">
+    <div className="flex items-center justify-between gap-4 rounded-xl border border-border-soft bg-card px-4 py-3.5">
       <span className="text-sm font-medium text-brand">{question}</span>
       <div className="relative flex gap-1.5 rounded-full bg-brand-light p-1">
         <motion.span
@@ -25,7 +25,7 @@ export function ToggleQuestion({
           type="button"
           onClick={() => onChange(true)}
           className={`relative z-10 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-            value ? "text-white" : "text-brand/50 hover:text-brand"
+            value ? "text-brand-foreground" : "text-brand/50 hover:text-brand"
           }`}
         >
           Sim
@@ -34,7 +34,7 @@ export function ToggleQuestion({
           type="button"
           onClick={() => onChange(false)}
           className={`relative z-10 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-            !value ? "text-white" : "text-brand/50 hover:text-brand"
+            !value ? "text-brand-foreground" : "text-brand/50 hover:text-brand"
           }`}
         >
           Não

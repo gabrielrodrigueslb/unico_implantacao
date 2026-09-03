@@ -74,7 +74,7 @@ export function QuickRepliesStep({
             }
           }}
           placeholder="Nome do novo atalho"
-          className="w-full max-w-[280px] rounded-xl border border-border-soft bg-white px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/40 focus:border-accent"
+          className="w-full max-w-[280px] rounded-xl border border-border-soft bg-card px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/40 focus:border-accent"
         />
         <button
           type="button"
@@ -98,7 +98,7 @@ export function QuickRepliesStep({
               transition={{ duration: 0.2, ease: "easeOut" }}
               className="overflow-hidden"
             >
-              <div className="rounded-2xl border border-border-soft bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+              <div className="rounded-2xl border border-border-soft bg-card p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
                 <div className={`transition-opacity ${reply.selected ? "" : "opacity-45"}`}>
                   <div className="flex items-baseline gap-1">
                     <span className="shrink-0 text-sm font-semibold text-brand/30">!</span>

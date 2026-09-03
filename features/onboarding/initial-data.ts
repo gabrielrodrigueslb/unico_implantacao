@@ -138,8 +138,7 @@ export function createInitialData(): OnboardingData {
     customers: {
       wantsImport: false,
       source: "",
-      approxCount: "",
-      responsible: "",
+      sourceOther: "",
       notes: "",
     },
     observations: "",

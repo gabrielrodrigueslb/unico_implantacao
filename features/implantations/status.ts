@@ -53,6 +53,7 @@ export const JOB_TYPE_LABELS: Record<DeploymentJobType, string> = {
   CREATE_CONTACT_TAGS: "Criar etiquetas de contato",
   CREATE_CHAT_TAGS: "Criar etiquetas de chat",
   CREATE_QUICK_REPLIES: "Criar respostas rápidas",
+  CREATE_PAUSE_TYPES: "Criar motivos de pausa",
 };
 
 export const JOB_STATUS_LABELS: Record<DeploymentJobStatus, string> = {

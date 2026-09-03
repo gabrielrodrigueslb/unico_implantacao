@@ -148,9 +148,10 @@ model Onboarding {
   contactImport     ContactImport?
 }
 
-/// CSV enviado pelo cliente no onboarding. O arquivo fica fora de qualquer
-/// pasta pública; a tabela guarda apenas metadados para prévia e download no
-/// painel autenticado.
+/// Planilha de contatos (CSV ou XLSX) anexada pelo cliente no onboarding.
+/// Etapa opcional e sem execução automática: o arquivo fica fora de
+/// qualquer pasta pública, sem parsing ou validação de conteúdo — a tabela
+/// guarda só metadados para download manual pelo implantador.
 model ContactImport {
   id             String     @id @default(cuid())
   onboardingId   String     @unique
@@ -158,11 +159,6 @@ model ContactImport {
   originalName   String
   storageName    String     @unique
   sizeBytes      Int
-  columns        String[]
-  totalRows      Int
-  validRows      Int
-  invalidRows    Int
-  preview        Json
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
 }
@@ -196,6 +192,7 @@ enum DeploymentJobType {
   CREATE_CONTACT_TAGS
   CREATE_CHAT_TAGS
   CREATE_QUICK_REPLIES
+  CREATE_PAUSE_TYPES
 }
 
 enum DeploymentJobStatus {

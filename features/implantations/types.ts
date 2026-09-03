@@ -87,7 +87,8 @@ export type DeploymentJobType =
   | "CONFIGURE_IVR"
   | "CREATE_CONTACT_TAGS"
   | "CREATE_CHAT_TAGS"
-  | "CREATE_QUICK_REPLIES";
+  | "CREATE_QUICK_REPLIES"
+  | "CREATE_PAUSE_TYPES";
 
 export type DeploymentJobStatus =
   | "PENDING"

@@ -36,7 +36,7 @@ export function EditableChipList({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.15 }}
-              className="flex items-center gap-1.5 rounded-full border border-border-soft bg-white px-3 py-1.5 text-sm text-brand"
+              className="flex items-center gap-1.5 rounded-full border border-border-soft bg-card px-3 py-1.5 text-sm text-brand"
             >
               {item.name}
               <button
@@ -61,7 +61,7 @@ export function EditableChipList({
             }
           }}
           placeholder={addPlaceholder}
-          className="w-full max-w-[240px] rounded-xl border border-border-soft bg-white px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/40 focus:border-accent"
+          className="w-full max-w-[240px] rounded-xl border border-border-soft bg-card px-3 py-2 text-sm text-brand outline-none placeholder:text-brand/40 focus:border-accent"
         />
         <button
           type="button"

@@ -47,7 +47,7 @@ export function ConfirmPopover({
   return (
     <div
       ref={ref}
-      className={`absolute bottom-full z-20 mb-2 w-52 rounded-xl border border-border-soft bg-white p-3 shadow-lg ${
+      className={`absolute bottom-full z-20 mb-2 w-52 rounded-xl border border-border-soft bg-card p-3 shadow-lg ${
         align === "end" ? "right-0" : "left-0"
       }`}
     >

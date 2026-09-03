@@ -14,7 +14,7 @@ export function SelectTrigger({
 }: ComponentProps<typeof SelectPrimitive.Trigger>) {
   return (
     <SelectPrimitive.Trigger
-      className={`flex w-full items-center justify-between rounded-xl border border-border-soft bg-white px-4 py-3 text-base text-brand outline-none transition-colors focus:border-accent data-[placeholder]:text-brand/40 ${className}`}
+      className={`flex w-full items-center justify-between rounded-xl border border-border-soft bg-card px-4 py-3 text-base text-brand outline-none transition-colors focus:border-accent data-[placeholder]:text-brand/40 ${className}`}
       {...props}
     >
       {children}
@@ -32,7 +32,7 @@ export function SelectContent({
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
-        className="z-50 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-border-soft bg-white shadow-lg"
+        className="z-50 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-border-soft bg-card shadow-lg"
         position="popper"
         side="bottom"
         avoidCollisions={false}

@@ -26,7 +26,7 @@ export function ChoiceCard({
       className={`flex items-center gap-4 rounded-xl border px-5 py-4 text-left transition-colors ${
         selected
           ? "border-selected-border bg-selected"
-          : "border-border-soft bg-white hover:border-brand/40"
+          : "border-border-soft bg-card hover:border-brand/40"
       }`}
     >
       <Image src={icon} alt="" width={56} height={56} className="shrink-0" />

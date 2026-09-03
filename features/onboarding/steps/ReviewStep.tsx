@@ -144,7 +144,10 @@ export function ReviewStep({
             value={data.customers.wantsImport ? "Sim" : "Não"}
           />
           {data.customers.wantsImport ? (
-            <Row label="Origem" value={data.customers.source} />
+            <Row
+              label="Origem"
+              value={data.customers.source === "" ? data.customers.sourceOther : data.customers.source}
+            />
           ) : null}
         </ReviewSection>
 

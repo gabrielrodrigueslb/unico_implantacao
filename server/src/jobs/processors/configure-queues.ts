@@ -169,11 +169,16 @@ function buildQueuePatch(
     endreasons: JSON.stringify(
       queue.requiresClosingReason ? queue.closingReasons.map((r) => r.name) : [],
     ),
+    // `surveytext`/`surveythankstext` só vão preenchidos quando a pesquisa
+    // está de fato ligada — o formulário guarda um texto padrão no rascunho
+    // mesmo com a opção desligada (pra não perder o que o cliente já
+    // escreveu se ligar de novo depois), então mandar esses campos sem
+    // checar `sendSatisfactionSurvey` enviava a pesquisa mesmo com "não
+    // desejo" marcado. Manda "" quando desligada pra limpar um texto salvo
+    // antes, num reprocessamento.
     sendsurvey: queue.sendSatisfactionSurvey ? 1 : 0,
-    ...(queue.satisfactionSurveyText ? { surveytext: queue.satisfactionSurveyText } : {}),
-    ...(queue.satisfactionThanksMessage
-      ? { surveythankstext: queue.satisfactionThanksMessage }
-      : {}),
+    surveytext: queue.sendSatisfactionSurvey ? queue.satisfactionSurveyText : "",
+    surveythankstext: queue.sendSatisfactionSurvey ? queue.satisfactionThanksMessage : "",
     ...(queue.offHoursMessage ? { offhourmsg: queue.offHoursMessage } : {}),
     distributionstrategy: DISTRIBUTION_STRATEGY_MAP[queue.distributionStrategy] ?? 0,
     autoaddcontacts: CONTACT_REGISTRATION_MAP[queue.contactRegistration] ?? 1,

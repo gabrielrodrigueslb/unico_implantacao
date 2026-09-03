@@ -123,7 +123,7 @@ export function ServiceStep({
                     transition={{ duration: 0.2, ease: "easeOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-white px-4 py-3">
+                    <div className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-card px-4 py-3">
                       <div className="flex items-center gap-3">
                         <span className="flex items-center gap-1.5 rounded-full bg-brand-light px-2.5 py-1 text-xs font-medium text-brand/70">
                           <ChannelIcon channel={queue.channel} className="size-3.5" />

@@ -62,3 +62,20 @@ export type AtenderBemPredefinedText = {
   accessgroups: number[];
   buttons: unknown[];
 } & Record<string, unknown>;
+
+/**
+ * "Motivo de pausa" no painel (Configurações → Pausas) — contrato
+ * confirmado ao vivo em `/base/config/reasonslist` (POST/PUT/GET
+ * `/reasons`). `action`: 1 = alerta o supervisor ao estourar o tempo, 0 =
+ * bloqueia o agente de continuar pausado.
+ */
+export type AtenderBemPauseType = {
+  id: number;
+  text: string;
+  maxtime: number;
+  timesperday: number;
+  status: number;
+  action: number;
+  stopmonitoring: number;
+  queues: { id: number; name: string }[];
+} & Record<string, unknown>;

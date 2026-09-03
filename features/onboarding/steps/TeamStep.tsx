@@ -28,6 +28,26 @@ function countUsersByRole(users: { role: UserRole }[]): Record<UserRole, number>
   return counts;
 }
 
+/**
+ * Quantos atendentes (só esse cargo — "nº de atendentes" da fila não conta
+ * supervisor/admin) já estão atribuídos a cada fila, pra limitar a lista de
+ * "Filas de acesso" no UserFormDialog. `excludeUserId` evita que o próprio
+ * usuário em edição conte contra o limite da fila em que ele já está.
+ */
+function countAtendentesByQueue(
+  users: UserDraft[],
+  excludeUserId?: string,
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const user of users) {
+    if (user.role !== "atendente" || user.id === excludeUserId) continue;
+    for (const queueId of user.queueIds) {
+      counts[queueId] = (counts[queueId] ?? 0) + 1;
+    }
+  }
+  return counts;
+}
+
 export function TeamStep({
   data,
   queues,
@@ -59,6 +79,7 @@ export function TeamStep({
     : (availableRoles[0] ?? "atendente");
   const hasRoom = (role: UserRole) => !userQuotas || counts[role] < userQuotas[role];
   const canAddAnyUser = availableRoles.some(hasRoom);
+  const queueAgentCounts = countAtendentesByQueue(data.users, editingUser?.id);
 
   function openCreateDialog() {
     if (!hasRoom(selectedDraftRole)) return;
@@ -129,13 +150,13 @@ export function TeamStep({
                   key={role}
                   className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium ${
                     atLimit
-                      ? "border-red-200 bg-red-50 text-red-600"
+                      ? "border-destructive/30 bg-destructive/10 text-destructive"
                       : "border-border-soft bg-brand-light text-brand/70"
                   }`}
                 >
                   <RoleIcon role={role} className="size-3.5" />
                   {ROLE_LABELS[role]}
-                  <span className={atLimit ? "text-red-600" : "text-brand/40"}>
+                  <span className={atLimit ? "text-destructive" : "text-brand/40"}>
                     {counts[role]}/{userQuotas[role]}
                   </span>
                 </span>
@@ -202,7 +223,7 @@ export function TeamStep({
                   transition={{ duration: 0.2, ease: "easeOut" }}
                   className="overflow-hidden"
                 >
-                  <div className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-white px-4 py-3">
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-card px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
                       <CircleUser className="size-7 shrink-0 text-brand/30" />
                       <div className="flex min-w-0 flex-col gap-1">
@@ -253,6 +274,7 @@ export function TeamStep({
           queues={queues}
           userQuotas={userQuotas}
           roleCounts={counts}
+          queueAgentCounts={queueAgentCounts}
           onSave={handleSaveUser}
         />
       </div>
@@ -348,7 +370,7 @@ export function TeamStep({
                       transition={{ duration: 0.2, ease: "easeOut" }}
                       className="overflow-hidden"
                     >
-                      <div className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-white px-4 py-3">
+                      <div className="flex items-center justify-between gap-3 rounded-xl border border-border-soft bg-card px-4 py-3">
                         <div className="flex min-w-0 items-center gap-3">
                           <Coffee className="size-7 shrink-0 text-brand/30" />
                           <div className="flex min-w-0 flex-col gap-1">

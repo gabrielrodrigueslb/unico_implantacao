@@ -9,6 +9,7 @@
 :root {
   --brand: #000033;
   --brand-light: #eef0fa;
+  --brand-foreground: #ffffff;
   --accent: #0f75fb;
   --selected: #e7f7ff;
   --selected-border: rgba(29, 127, 255, 0.2);
@@ -59,6 +60,7 @@
   --color-foreground: var(--foreground);
   --color-brand: var(--brand);
   --color-brand-light: var(--brand-light);
+  --color-brand-foreground: var(--brand-foreground);
   --color-accent: var(--accent);
   --color-selected: var(--selected);
   --color-selected-border: var(--selected-border);
@@ -175,6 +177,29 @@ button:not(:disabled) {
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: var(--accent);
+
+  /*
+   * O admin reaproveita os componentes do onboarding público (ReviewEditor
+   * monta a revisão com os mesmos steps/campos que o cliente preenche) —
+   * eles usam essa paleta "brand" fixa, pensada só pro visual claro do
+   * onboarding. Sem isso, "text-brand" (rótulos, textos) ficava roxo-escuro
+   * quase invisível em cima do card escuro do admin.
+   *
+   * `--brand` vira um cinza claro neutro (não o azul de destaque — esse é
+   * reservado pra ações reais: botão primário do admin, foco, seleção),
+   * pra combinar com o resto do painel escuro (cinza/branco/preto).
+   * `--brand-foreground` acompanha: preenchimentos sólidos (`bg-brand` +
+   * texto por cima, ex. botão primário do onboarding, badge do stepper)
+   * usam texto escuro em cima desse cinza claro, em vez do branco que
+   * fazia sentido só com o navy do modo claro.
+   */
+  --brand: oklch(0.75 0 0);
+  --brand-foreground: oklch(0.145 0 0);
+  --brand-light: oklch(1 0 0 / 8%);
+  --selected: color-mix(in oklch, var(--accent) 18%, transparent);
+  --selected-border: color-mix(in oklch, var(--accent) 35%, transparent);
+  --border-soft: oklch(1 0 0 / 12%);
+  --hairline: oklch(1 0 0 / 14%);
 }
 /*
  ---break---

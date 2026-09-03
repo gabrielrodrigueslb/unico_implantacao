@@ -4,6 +4,7 @@ import { configureIvrProcessor } from "./configure-ivr";
 import { configureQueuesProcessor } from "./configure-queues";
 import { createChatTagsProcessor } from "./create-chat-tags";
 import { createContactTagsProcessor } from "./create-contact-tags";
+import { createPauseTypesProcessor } from "./create-pause-types";
 import { createQuickRepliesProcessor } from "./create-quick-replies";
 import { createUsersProcessor } from "./create-users";
 import type { Processor } from "./types";
@@ -16,4 +17,5 @@ export const processors: Record<DeploymentJobType, Processor> = {
   CREATE_CONTACT_TAGS: createContactTagsProcessor,
   CREATE_CHAT_TAGS: createChatTagsProcessor,
   CREATE_QUICK_REPLIES: createQuickRepliesProcessor,
+  CREATE_PAUSE_TYPES: createPauseTypesProcessor,
 };

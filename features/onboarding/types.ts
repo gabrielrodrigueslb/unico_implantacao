@@ -157,9 +157,10 @@ export interface OnboardingData {
   };
   customers: {
     wantsImport: boolean;
+    /** Uma das CONTACT_SOURCE_OPTIONS, ou CONTACT_SOURCE_OTHER_VALUE. */
     source: string;
-    approxCount: string;
-    responsible: string;
+    /** Preenchido quando source === CONTACT_SOURCE_OTHER_VALUE. */
+    sourceOther: string;
     notes: string;
     contactImport?: ContactImportSummary;
   };
@@ -170,11 +171,6 @@ export interface ContactImportSummary {
   id: string;
   originalName: string;
   sizeBytes: number;
-  columns: string[];
-  totalRows: number;
-  validRows: number;
-  invalidRows: number;
-  preview: Record<string, string>[];
   uploadedAt: string;
 }
 
@@ -345,6 +341,15 @@ export const ERP_OPTIONS = [
 
 /** Sentinela do select de ERP: abre um campo de texto livre. */
 export const ERP_OTHER_VALUE = "outro";
+
+export const CONTACT_SOURCE_OPTIONS = [
+  "Planilha do ERP",
+  "Agenda atual",
+  "WhatsApp",
+] as const;
+
+/** Sentinela do select de origem da base de contatos: abre um campo de texto livre. */
+export const CONTACT_SOURCE_OTHER_VALUE = "outro-origem";
 
 export const SEGMENT_OPTIONS: {
   value: CompanySegment;

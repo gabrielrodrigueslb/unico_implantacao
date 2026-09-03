@@ -60,7 +60,8 @@ async function contactImport(req: Request, res: Response) {
 async function downloadContactImport(req: Request, res: Response) {
   await implantationService.getById(req.params.id, req.user!);
   const file = await contactImportService.downloadByImplantation(req.params.id);
-  return res.download(file.filePath, file.originalName, { headers: { "Content-Type": "text/csv; charset=utf-8" } });
+  // CSV ou XLSX — deixa o navegador inferir o Content-Type pela extensão do arquivo original.
+  return res.download(file.filePath, file.originalName);
 }
 
 export const implantationController = {

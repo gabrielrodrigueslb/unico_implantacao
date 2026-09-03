@@ -7,4 +7,5 @@ export * as userQueues from "./user-queues";
 export * as ura from "./ura";
 export * as tags from "./tags";
 export * as quickReplies from "./quick-replies";
+export * as pauseTypes from "./pause-types";
 export * as defaults from "./defaults";

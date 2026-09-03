@@ -50,7 +50,7 @@ export function StepShell({
                   Etapa {stepIndex + 1} de {PROGRESS_STEPS.length}
                 </motion.span>
               </AnimatePresence>
-              <span className="flex size-[22px] items-center justify-center rounded-md bg-brand text-xs font-semibold text-white">
+              <span className="flex size-[22px] items-center justify-center rounded-md bg-brand text-xs font-semibold text-brand-foreground">
                 ?
               </span>
             </div>

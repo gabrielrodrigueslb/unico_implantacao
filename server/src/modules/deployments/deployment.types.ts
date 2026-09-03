@@ -6,6 +6,7 @@ export const DEPLOYMENT_JOB_TYPES = [
   "CREATE_CONTACT_TAGS",
   "CREATE_CHAT_TAGS",
   "CREATE_QUICK_REPLIES",
+  "CREATE_PAUSE_TYPES",
 ] as const;
 
 export type DeploymentJobType = (typeof DEPLOYMENT_JOB_TYPES)[number];
@@ -23,6 +24,7 @@ export const JOB_DEPENDENCIES: Record<DeploymentJobType, DeploymentJobType[]> = 
   CREATE_CONTACT_TAGS: [],
   CREATE_CHAT_TAGS: [],
   CREATE_QUICK_REPLIES: [],
+  CREATE_PAUSE_TYPES: [],
 };
 
 export interface DeploymentJobData {

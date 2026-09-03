@@ -28,7 +28,7 @@ export function RepeatableList<T extends { id: string }>({
         items.map((item) => (
           <div
             key={item.id}
-            className="flex flex-col gap-3 rounded-xl border border-border-soft bg-white p-4 sm:flex-row sm:items-start"
+            className="flex flex-col gap-3 rounded-xl border border-border-soft bg-card p-4 sm:flex-row sm:items-start"
           >
             <div className="flex-1">{renderItem(item)}</div>
             <button

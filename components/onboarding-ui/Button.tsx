@@ -5,8 +5,8 @@ import { motion, type HTMLMotionProps } from "motion/react";
 type Variant = "primary" | "outline" | "accent" | "ghost" | "danger";
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary: "bg-brand text-white hover:bg-brand/90",
-  outline: "bg-white text-brand border border-brand hover:bg-brand-light",
+  primary: "bg-brand text-brand-foreground hover:bg-brand/90",
+  outline: "bg-card text-brand border border-brand hover:bg-brand-light",
   accent: "bg-accent text-white hover:bg-accent/90",
   ghost: "text-brand/60 hover:text-brand",
   danger: "text-red-500 hover:text-red-600",
