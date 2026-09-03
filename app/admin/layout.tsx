@@ -1,9 +1,28 @@
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { fetchMe } from "@/features/auth/api";
 import { getAuthHeaders } from "@/lib/server-session";
+
+/**
+ * `/admin` e tudo abaixo dele é área restrita à equipe — nunca deve aparecer
+ * em buscadores. Herdado por todas as rotas filhas (users, implantations,
+ * audit-logs, profile) a menos que sobrescrevam `metadata.robots`.
+ */
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
+};
 
 /**
  * Casca compartilhada de toda a área /admin — sidebar + usuário logado. O
