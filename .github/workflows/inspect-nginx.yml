@@ -1,0 +1,45 @@
+name: Inspect Nginx
+
+on:
+  workflow_dispatch:
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect Unico Contato Nginx configuration
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            deploy_path="${{ secrets.DEPLOY_PATH }}"
+
+            echo 'Resolved domain address:'
+            getent ahostsv4 unicocontato.tech || true
+
+            echo 'Application listener:'
+            grep -E '^(API_PORT|POSTGRES_PORT|REDIS_PORT)=' "$deploy_path/.env.compose"
+
+            echo 'Nginx server block for unicocontato.tech:'
+            (sudo nginx -T 2>&1 || nginx -T 2>&1) | awk '
+              /^# configuration file / { file = $0 }
+              /^[[:space:]]*server[[:space:]]*\{/ {
+                in_server = 1
+                depth = 1
+                block = file ORS $0
+                next
+              }
+              in_server {
+                block = block ORS $0
+                opens = gsub(/\{/, "{")
+                closes = gsub(/\}/, "}")
+                depth += opens - closes
+                if (depth == 0) {
+                  if (block ~ /server_name[[:space:]].*unicocontato\.tech/) print block
+                  in_server = 0
+                }
+              }
+            '
