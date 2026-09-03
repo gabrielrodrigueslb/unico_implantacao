@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { CopyIcon, ExternalLinkIcon, EyeIcon, MoreHorizontalIcon, XIcon } from "lucide-react";
 import { toast } from "sonner";
+import { formatCNPJ } from "@/features/onboarding/format";
 import { cancelImplantation, fullOnboardingLink, onboardingLink } from "../api";
 import { canCancel } from "../status";
 import type { Implantation } from "../types";
@@ -75,6 +76,7 @@ export function ImplantationsTable({ implantations }: { implantations: Implantat
         <TableHeader>
           <TableRow>
             <TableHead>Empresa / instância</TableHead>
+            <TableHead>CNPJ</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Plano</TableHead>
             <TableHead>Criada em</TableHead>
@@ -96,6 +98,9 @@ export function ImplantationsTable({ implantations }: { implantations: Implantat
                     {implantation.instanceName}
                   </span>
                 </Link>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {implantation.cnpj ? formatCNPJ(implantation.cnpj) : "—"}
               </TableCell>
               <TableCell>
                 <StatusBadge status={implantation.status} />

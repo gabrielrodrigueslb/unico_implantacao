@@ -23,6 +23,7 @@ import { ReviewEditor } from "@/features/implantations/components/ReviewEditor"
 import { RunStatusPoller } from "@/features/implantations/components/RunStatusPoller"
 import { StatusBadge } from "@/features/implantations/components/StatusBadge"
 import { mergeOnboardingData } from "@/features/implantations/onboarding-merge"
+import { formatCNPJ } from "@/features/onboarding/format"
 import type { OnboardingData } from "@/features/onboarding/types"
 import { fetchMe } from "@/features/auth/api"
 import { fetchUsers } from "@/features/users/api"
@@ -107,6 +108,29 @@ export default async function ImplantationDetailPage({
                 <div className="flex flex-col gap-0.5">
                   <span className="text-xs text-muted-foreground">Plano contratado</span>
                   <span className="text-sm">{implantation.planName ?? "—"}</span>
+                </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-xs text-muted-foreground">CNPJ</span>
+                  <span className="text-sm">
+                    {implantation.cnpj ? formatCNPJ(implantation.cnpj) : "—"}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground">Usuários contratados</span>
+                  <div className="flex gap-3 text-sm">
+                    <span>
+                      <span className="text-muted-foreground">Admin </span>
+                      {implantation.adminQuota ?? "—"}
+                    </span>
+                    <span>
+                      <span className="text-muted-foreground">Atendente </span>
+                      {implantation.agentQuota ?? "—"}
+                    </span>
+                    <span>
+                      <span className="text-muted-foreground">Supervisor </span>
+                      {implantation.supervisorQuota ?? "—"}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-xs text-muted-foreground">Onboarding enviado em</span>
