@@ -27,7 +27,7 @@ function Empty({ children }: { children: React.ReactNode }) {
   return <p className="text-sm text-muted-foreground">{children}</p>;
 }
 
-export function OnboardingReview({ data }: { data: Partial<OnboardingData> }) {
+export function OnboardingReview({ data, implantationId }: { data: Partial<OnboardingData>; implantationId?: string }) {
   const company = data.company;
   const service = data.service;
   const team = data.team;
@@ -265,6 +265,22 @@ export function OnboardingReview({ data }: { data: Partial<OnboardingData> }) {
               <Field label="Quantidade aproximada" value={customers.approxCount} />
               <Field label="Responsável pelo envio" value={customers.responsible} />
               <Field label="Observações" value={customers.notes} />
+              {customers.contactImport && (
+                <>
+                  <Field label="Arquivo" value={customers.contactImport.originalName} />
+                  <Field label="Contatos válidos" value={`${customers.contactImport.validRows} de ${customers.contactImport.totalRows}`} />
+                  <Field label="Linhas com pendência" value={customers.contactImport.invalidRows} />
+                  <Field label="Colunas detectadas" value={customers.contactImport.columns.join(", ")} />
+                  {implantationId && (
+                    <a
+                      className="text-sm font-medium text-accent underline"
+                      href={`${process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000"}/implantations/${implantationId}/contact-import/download`}
+                    >
+                      Baixar CSV enviado
+                    </a>
+                  )}
+                </>
+              )}
             </CardContent>
           </Card>
         ) : (

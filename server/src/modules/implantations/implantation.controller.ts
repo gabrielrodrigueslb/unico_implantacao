@@ -6,6 +6,7 @@ import {
   updateImplantationSchema,
 } from "./implantation.schema";
 import { onboardingService } from "../onboarding/onboarding.service";
+import { contactImportService } from "../onboarding/contact-import.service";
 
 async function create(req: Request, res: Response) {
   const data = createImplantationSchema.parse(req.body);
@@ -51,6 +52,17 @@ async function activity(req: Request, res: Response) {
   return res.json(events);
 }
 
+async function contactImport(req: Request, res: Response) {
+  await implantationService.getById(req.params.id, req.user!);
+  return res.json(await contactImportService.getByImplantation(req.params.id));
+}
+
+async function downloadContactImport(req: Request, res: Response) {
+  await implantationService.getById(req.params.id, req.user!);
+  const file = await contactImportService.downloadByImplantation(req.params.id);
+  return res.download(file.filePath, file.originalName, { headers: { "Content-Type": "text/csv; charset=utf-8" } });
+}
+
 export const implantationController = {
   create,
   list,
@@ -60,4 +72,6 @@ export const implantationController = {
   cancel,
   rotateOnboardingToken,
   activity,
+  contactImport,
+  downloadContactImport,
 };

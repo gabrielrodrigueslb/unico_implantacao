@@ -161,8 +161,21 @@ export interface OnboardingData {
     approxCount: string;
     responsible: string;
     notes: string;
+    contactImport?: ContactImportSummary;
   };
   observations: string;
+}
+
+export interface ContactImportSummary {
+  id: string;
+  originalName: string;
+  sizeBytes: number;
+  columns: string[];
+  totalRows: number;
+  validRows: number;
+  invalidRows: number;
+  preview: Record<string, string>[];
+  uploadedAt: string;
 }
 
 export type StepId =

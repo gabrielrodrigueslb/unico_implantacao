@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { onboardingService } from "./onboarding.service";
 import { saveOnboardingSchema } from "./onboarding.schema";
+import { contactImportService } from "./contact-import.service";
 
 async function getByToken(req: Request, res: Response) {
   const onboarding = await onboardingService.getByToken(req.params.token);
@@ -18,4 +19,10 @@ async function submit(req: Request, res: Response) {
   return res.json(onboarding);
 }
 
-export const onboardingController = { getByToken, saveProgress, submit };
+async function uploadContactImport(req: Request, res: Response) {
+  if (!req.file) throw new Error("Envie um arquivo CSV no campo file.");
+  const contactImport = await contactImportService.save(req.params.token, req.file);
+  return res.status(201).json(contactImport);
+}
+
+export const onboardingController = { getByToken, saveProgress, submit, uploadContactImport };

@@ -1,4 +1,4 @@
-import type { OnboardingData, StepId, UserQuotas } from "./types";
+import type { ContactImportSummary, OnboardingData, StepId, UserQuotas } from "./types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
 
@@ -37,6 +37,17 @@ export async function saveOnboardingProgress(
 export async function submitOnboarding(token: string): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/onboarding/${token}/submit`, { method: "POST" });
   if (!response.ok) throw new Error("Não foi possível enviar o onboarding");
+}
+
+export async function uploadContactImport(token: string, file: File): Promise<ContactImportSummary> {
+  const form = new FormData();
+  form.append("file", file);
+  const response = await fetch(`${API_BASE_URL}/onboarding/${token}/contact-import`, { method: "POST", body: form });
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.message ?? "Não foi possível enviar o CSV");
+  }
+  return response.json();
 }
 
 /** Espelha EDITABLE_STATUSES do backend — status em que o cliente ainda pode preencher/editar. */

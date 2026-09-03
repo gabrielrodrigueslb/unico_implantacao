@@ -160,7 +160,7 @@ export default async function ImplantationDetailPage({
                       userQuotas={implantationUserQuotas(implantation)}
                     />
                   ) : (
-                    <OnboardingReview data={responses} />
+                    <OnboardingReview data={responses} implantationId={implantation.id} />
                   )
                 ) : (
                   <Card>

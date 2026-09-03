@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { saveOnboardingProgress, submitOnboarding } from "./api";
+import { saveOnboardingProgress, submitOnboarding, uploadContactImport } from "./api";
 import { StepShell } from "./components/StepShell";
 import {
   buildChatTags,
@@ -253,6 +253,10 @@ export function OnboardingWizard({
         <CustomersStep
           data={data.customers}
           onChange={(customers) => setData({ ...data, customers })}
+          onUpload={token ? async (file) => {
+            const contactImport = await uploadContactImport(token, file);
+            setData((current) => ({ ...current, customers: { ...current.customers, contactImport } }));
+          } : undefined}
         />
       )}
 
