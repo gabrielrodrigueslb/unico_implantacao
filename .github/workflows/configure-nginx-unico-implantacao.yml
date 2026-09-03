@@ -1,0 +1,57 @@
+name: Configure Unico Implantacao API Route
+
+on:
+  workflow_dispatch:
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add isolated API route and gracefully reload Nginx
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            api_port=4001
+            config_file="$(readlink -f /etc/nginx/sites-enabled/default)"
+            snippet_file=/etc/nginx/snippets/unico-implantacao-api.conf
+            include_line='    include /etc/nginx/snippets/unico-implantacao-api.conf;'
+
+            curl --fail --silent --show-error "http://127.0.0.1:$api_port/health"
+
+            if [ -e "$snippet_file" ]; then
+              echo "A rota dedicada já existe em $snippet_file; nenhuma alteração foi feita."
+            else
+              sudo tee "$snippet_file" >/dev/null <<'EOF'
+            # API do Unico Implantacao. O sufixo / no proxy_pass remove /api/imp/.
+            location = /api/imp {
+                return 308 /api/imp/;
+            }
+
+            location ^~ /api/imp/ {
+                proxy_pass http://127.0.0.1:4001/;
+                proxy_http_version 1.1;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+            }
+            EOF
+              sudo chmod 0644 "$snippet_file"
+            fi
+
+            if ! grep -Fqx "$include_line" "$config_file"; then
+              backup_file="${config_file}.before-unico-implantacao-api.$(date +%Y%m%d%H%M%S)"
+              sudo cp --preserve=mode,timestamps "$config_file" "$backup_file"
+              sudo sed -i '\|^[[:space:]]*# Regra principal para seu APP (Proxy para o Node\.js)|i\
+            include /etc/nginx/snippets/unico-implantacao-api.conf;' "$config_file"
+              grep -Fqx "$include_line" "$config_file"
+            fi
+
+            sudo nginx -t
+            sudo systemctl reload nginx
+            curl --fail --silent --show-error --resolve unicocontato.tech:443:127.0.0.1 \
+              https://unicocontato.tech/api/imp/health
