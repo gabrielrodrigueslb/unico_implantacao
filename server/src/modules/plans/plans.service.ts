@@ -1,4 +1,7 @@
-import { fetchAvailablePlans } from "../../integrations/atender-bem/partner-client";
+import {
+  clientAdminQuota,
+  fetchAvailablePlans,
+} from "../../integrations/atender-bem/partner-client";
 
 /**
  * Enxuga o plano da API do Atender Bem para só o que a criação de
@@ -15,7 +18,9 @@ async function list() {
     currencyCode: plan.currencycode,
     agentQuota: plan.chatagents,
     supervisorQuota: plan.supervisors,
-    adminQuota: plan.monitoringagents,
+    // O plano inclui o administrador técnico que o Atender Bem cria ao
+    // provisionar a instância. O cliente só pode cadastrar o saldo.
+    adminQuota: clientAdminQuota(plan.monitoringagents),
   }));
 }
 

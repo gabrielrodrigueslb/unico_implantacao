@@ -1,6 +1,17 @@
 import { env } from "../../config/env";
 import { AtenderBemClient } from "./atender-bem.client";
 
+/**
+ * Toda instância nova do Atender Bem já vem com uma conta Administrador.
+ * `monitoringagents` inclui essa conta técnica, portanto só o saldo pode
+ * ser oferecido no onboarding como administradores adicionais do cliente.
+ */
+export const DEFAULT_INSTANCE_ADMIN_COUNT = 1;
+
+export function clientAdminQuota(planAdminQuota: number): number {
+  return Math.max(0, planAdminQuota - DEFAULT_INSTANCE_ADMIN_COUNT);
+}
+
 /** Um plano tal como devolvido por partner/getAllAvailablePlans (campos usados por aqui). */
 export interface AtenderBemPlan {
   id: number;

@@ -2,7 +2,10 @@ import type { AdminUser, Implantation, Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
 import { AppError, NotFoundError } from "../../lib/errors";
 import { encryptSecret } from "../../lib/crypto";
-import { fetchAvailablePlans } from "../../integrations/atender-bem/partner-client";
+import {
+  clientAdminQuota,
+  fetchAvailablePlans,
+} from "../../integrations/atender-bem/partner-client";
 import { parseInstanceUrl } from "./instance-url";
 import { implantationAccessWhere, type AuthenticatedUser } from "../../lib/access-control";
 import { onboardingTokenExpiresAt } from "../onboarding/onboarding.service";
@@ -90,7 +93,9 @@ async function create(data: CreateImplantationInput, actor: Actor) {
       // sobrescrever cada um na criação do link (ver CreateImplantationSheet.tsx).
       agentQuota: agentQuota ?? plan.chatagents,
       supervisorQuota: supervisorQuota ?? plan.supervisors,
-      adminQuota: adminQuota ?? plan.monitoringagents,
+      // `monitoringagents` conta também o admin padrão da instância, que não
+      // pertence ao cliente e já existe antes do onboarding.
+      adminQuota: adminQuota ?? clientAdminQuota(plan.monitoringagents),
       status: "ONBOARDING_PENDING",
       onboardingTokenExpiresAt: onboardingTokenExpiresAt(),
     },
