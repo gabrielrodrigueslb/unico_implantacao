@@ -17,8 +17,13 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npx tsc --noEmit
-      - run: npm run lint
+      # Escopo explícito — o tsconfig/eslint da raiz não excluem server/ (que
+      # tem seu próprio tsconfig e é typechecado no job "backend"), e
+      # server/node_modules não existe neste job.
+      - run: npx eslint app components features lib
+      # "next build" já typechecka o projeto (e precisa rodar primeiro pra
+      # gerar .next/types — sem isso um "tsc --noEmit" solto falha em tipos
+      # como LayoutProps, que só existem depois do build).
       - run: npm run build
         env:
           NEXT_PUBLIC_API_BASE_URL: http://localhost:4000
