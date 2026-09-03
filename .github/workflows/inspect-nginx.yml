@@ -1,0 +1,26 @@
+name: Inspect Nginx
+
+on:
+  workflow_dispatch:
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect active Nginx routes
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            getent ahostsv4 unicocontato.tech || true
+            getent ahostsv4 www.unicocontato.tech || true
+            getent ahostsv4 api.unicocontato.tech || true
+
+            # Mostra só o roteamento ativo; valores de eventuais credenciais em
+            # URLs upstream são redigidos. Nenhum arquivo é criado ou alterado.
+            (sudo nginx -T 2>&1 || nginx -T 2>&1) \
+              | grep -E 'configuration file|^[[:space:]]*(listen|server_name|proxy_pass|root)[[:space:]]' \
+              | sed -E 's#(https?://)[^/@[:space:]]+:[^/@[:space:]]+@#\1***:***@#g'
