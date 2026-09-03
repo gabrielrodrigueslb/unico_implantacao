@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
 
+import { useAdminPortalContainer } from "@/hooks/use-admin-portal-container"
 import { cn } from "@/lib/utils"
 
 type DrawerContextProps = {
@@ -56,8 +57,15 @@ function DrawerTrigger({ ...props }: DrawerPrimitive.Trigger.Props) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
 }
 
-function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
+function DrawerPortal({ container, ...props }: DrawerPrimitive.Portal.Props) {
+  const adminContainer = useAdminPortalContainer()
+  return (
+    <DrawerPrimitive.Portal
+      data-slot="drawer-portal"
+      container={container ?? adminContainer}
+      {...props}
+    />
+  )
 }
 
 function DrawerClose({ ...props }: DrawerPrimitive.Close.Props) {

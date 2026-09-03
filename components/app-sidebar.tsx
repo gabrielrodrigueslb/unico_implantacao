@@ -71,7 +71,15 @@ export function AppSidebar({
                 alt="Único"
                 width={110}
                 height={33}
-                className="h-6 w-auto group-data-[collapsible=icon]:hidden"
+                className="h-6 w-auto group-data-[collapsible=icon]:hidden dark:hidden"
+                priority
+              />
+              <Image
+                src="/logounico_branca.svg"
+                alt="Único"
+                width={110}
+                height={33}
+                className="hidden h-6 w-auto group-data-[collapsible=icon]:hidden dark:block"
                 priority
               />
             </SidebarMenuButton>

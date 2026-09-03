@@ -4,15 +4,17 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   Dialog,
   DialogBody,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
-} from "@/components/onboarding-ui/Dialog";
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -195,15 +197,18 @@ export function UsersTable({
       >
         <DialogContent>
           <form onSubmit={handleResetPassword}>
-            <DialogHeader
-              title="Redefinir senha"
-              subtitle={resettingUser ? `Defina uma nova senha para ${resettingUser.name}.` : undefined}
-            />
+            <DialogHeader>
+              <DialogTitle>Redefinir senha</DialogTitle>
+              {resettingUser && (
+                <DialogDescription>
+                  Defina uma nova senha para {resettingUser.name}.
+                </DialogDescription>
+              )}
+            </DialogHeader>
             <DialogBody>
               <Label htmlFor="reset-password">Nova senha</Label>
-              <Input
+              <PasswordInput
                 id="reset-password"
-                type="password"
                 autoComplete="new-password"
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
@@ -213,7 +218,7 @@ export function UsersTable({
               />
               <ul className="mt-2 space-y-1 text-xs text-muted-foreground" aria-live="polite">
                 {passwordRequirements(newPassword).map(([label, passed]) => (
-                  <li key={label} className={passed ? "text-green-700" : undefined}>{passed ? "✓" : "○"} {label}</li>
+                  <li key={label} className={passed ? "text-success" : undefined}>{passed ? "✓" : "○"} {label}</li>
                 ))}
               </ul>
             </DialogBody>

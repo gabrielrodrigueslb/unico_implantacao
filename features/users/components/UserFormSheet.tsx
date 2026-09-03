@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import {
   Select,
   SelectContent,
@@ -161,9 +162,8 @@ export function UserFormSheet({
             {!editingUser && (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="user-password">Senha inicial</Label>
-                <Input
+                <PasswordInput
                   id="user-password"
-                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   minLength={12}
@@ -212,7 +212,7 @@ function PasswordStrengthHint({ password }: { password: string }) {
   return (
     <ul className="space-y-1 text-xs text-muted-foreground" aria-live="polite">
       {requirements.map(([label, passed]) => (
-        <li key={label} className={passed ? "text-green-700" : undefined}>
+        <li key={label} className={passed ? "text-success" : undefined}>
           {passed ? "✓" : "○"} {label}
         </li>
       ))}

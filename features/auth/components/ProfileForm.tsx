@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { toast } from "sonner";
+import { isStrongPassword, passwordRequirements } from "../password-strength";
 import { updateProfile } from "../api";
 import type { AdminUser } from "../types";
 
@@ -37,6 +39,10 @@ export function ProfileForm({ user }: { user: AdminUser }) {
 
   async function handleChangePassword(event: React.FormEvent) {
     event.preventDefault();
+    if (!isStrongPassword(newPassword)) {
+      toast.error("A nova senha não atende aos requisitos de segurança");
+      return;
+    }
     if (newPassword !== confirmPassword) {
       toast.error("A confirmação não bate com a nova senha");
       return;
@@ -94,9 +100,8 @@ export function ProfileForm({ user }: { user: AdminUser }) {
           <form onSubmit={handleChangePassword} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="current-password">Senha atual</Label>
-              <Input
+              <PasswordInput
                 id="current-password"
-                type="password"
                 autoComplete="current-password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
@@ -106,29 +111,36 @@ export function ProfileForm({ user }: { user: AdminUser }) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="new-password">Nova senha</Label>
-                <Input
+                <PasswordInput
                   id="new-password"
-                  type="password"
                   autoComplete="new-password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  minLength={8}
+                  minLength={12}
                   required
                 />
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="confirm-password">Confirmar nova senha</Label>
-                <Input
+                <PasswordInput
                   id="confirm-password"
-                  type="password"
                   autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  minLength={8}
+                  minLength={12}
                   required
                 />
               </div>
             </div>
+            {newPassword && (
+              <ul className="-mt-2 space-y-1 text-xs text-muted-foreground" aria-live="polite">
+                {passwordRequirements(newPassword).map(([label, passed]) => (
+                  <li key={label} className={passed ? "text-success" : undefined}>
+                    {passed ? "✓" : "○"} {label}
+                  </li>
+                ))}
+              </ul>
+            )}
             <Button type="submit" disabled={savingPassword} className="w-fit">
               {savingPassword ? "Alterando..." : "Alterar senha"}
             </Button>

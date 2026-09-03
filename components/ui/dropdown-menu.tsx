@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 
+import { useAdminPortalContainer } from "@/hooks/use-admin-portal-container"
 import { cn } from "@/lib/utils"
 import { ChevronRightIcon, CheckIcon } from "lucide-react"
 
@@ -30,8 +31,10 @@ function DropdownMenuContent({
     MenuPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
   >) {
+  const container = useAdminPortalContainer()
+
   return (
-    <MenuPrimitive.Portal>
+    <MenuPrimitive.Portal container={container}>
       <MenuPrimitive.Positioner
         className="isolate z-50 outline-none"
         align={align}

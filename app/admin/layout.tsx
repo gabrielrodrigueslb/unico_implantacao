@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
+import { AdminThemeInit } from "@/components/admin-theme-init";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { fetchMe } from "@/features/auth/api";
+import { ADMIN_SHELL_ID } from "@/lib/admin-theme";
 import { getAuthHeaders } from "@/lib/server-session";
 
 /**
@@ -40,6 +42,14 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <SidebarProvider
+      id={ADMIN_SHELL_ID}
+      // `body` fica fora do shell, então resolve `text-foreground` com o
+      // valor do modo claro e QUALQUER elemento aqui dentro sem cor própria
+      // (h1, ícone de botão ghost, etc.) herdaria esse preto fixo. Declarar
+      // a cor de novo aqui faz a herança recomeçar já considerando o `.dark`
+      // deste mesmo elemento.
+      className="bg-background text-foreground"
+      suppressHydrationWarning
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -47,6 +57,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
         } as React.CSSProperties
       }
     >
+      <AdminThemeInit />
       <AppSidebar variant="inset" user={user} />
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
