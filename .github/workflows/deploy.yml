@@ -19,11 +19,12 @@ jobs:
           # Conteúdo de server/.env sem DATABASE_URL, REDIS_URL e FRONTEND_URL.
           # Nunca é escrito no repositório; só é entregue à primeira instalação.
           DEPLOY_SERVER_ENV: ${{ secrets.DEPLOY_SERVER_ENV }}
+          DEPLOY_FRONTEND_URL: ${{ secrets.DEPLOY_FRONTEND_URL }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          envs: DEPLOY_SERVER_ENV
+          envs: DEPLOY_SERVER_ENV,DEPLOY_FRONTEND_URL
           script: |
             set -e
 
@@ -86,24 +87,24 @@ jobs:
             if ! grep -q '^API_PORT=' .env.compose; then
               printf 'API_PORT=%s\n' "$(first_free_port 4000)" >> .env.compose
             fi
-            if ! grep -q '^WEB_PORT=' .env.compose; then
-              printf 'WEB_PORT=%s\n' "$(first_free_port 3000)" >> .env.compose
-            fi
-
             set -a
             . ./.env.compose
             set +a
 
             # Valores gerados no host: são estáveis entre deploys e não podem
             # aparecer no bundle do frontend nem nos logs do Actions.
-            sed -i '/^DATABASE_URL=/d; /^REDIS_URL=/d; /^FRONTEND_URL=/d; /^PORT=/d' server/.env
+            sed -i '/^DATABASE_URL=/d; /^REDIS_URL=/d; /^PORT=/d' server/.env
             {
               printf 'DATABASE_URL=postgresql://%s:%s@127.0.0.1:%s/%s?schema=public\n' \
                 "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_PORT" "$POSTGRES_DB"
               printf 'REDIS_URL=redis://:%s@127.0.0.1:%s\n' "$REDIS_PASSWORD" "$REDIS_PORT"
               printf 'PORT=%s\n' "$API_PORT"
-              printf 'FRONTEND_URL=http://%s:%s\n' "${{ secrets.DEPLOY_HOST }}" "$WEB_PORT"
             } >> server/.env
+
+            if [ -n "$DEPLOY_FRONTEND_URL" ]; then
+              sed -i '/^FRONTEND_URL=/d' server/.env
+              printf 'FRONTEND_URL=%s\n' "$DEPLOY_FRONTEND_URL" >> server/.env
+            fi
 
             JWT_SECRET="$(sed -n 's/^JWT_SECRET=//p' server/.env | tail -n 1)"
             if [ -z "$JWT_SECRET" ]; then
@@ -111,17 +112,8 @@ jobs:
               exit 1
             fi
 
-            umask 077
-            cat > .env.local <<EOF
-            NEXT_PUBLIC_API_BASE_URL=http://${{ secrets.DEPLOY_HOST }}:$API_PORT
-            JWT_SECRET=$JWT_SECRET
-            EOF
-
             docker compose --env-file .env.compose up -d postgres redis
             docker compose ps
-
-            npm ci
-            npm run build
 
             cd server
             npm ci
@@ -130,15 +122,10 @@ jobs:
             npm run seed:admin
             cd ..
 
-            # Ajuste os nomes dos processos conforme o que já roda no servidor
-            # (esses comandos assumem pm2 — troque se o deploy usa outra coisa).
-            # O Next recebe a porta como argumento de processo; recriamos apenas
-            # este processo para aplicar uma porta nova quando o host já a ocupa.
-            pm2 delete unico-implantacao-web || true
-            pm2 start npm --name unico-implantacao-web --cwd "$DEPLOY_PATH" -- run start -- --port "$WEB_PORT" --hostname 0.0.0.0
+            # O frontend será hospedado fora da VPS. Somente API e worker são
+            # reiniciados aqui; nenhum outro processo do host é modificado.
             pm2 restart unico-implantacao-api    --update-env || pm2 start npm --name unico-implantacao-api    --cwd "$DEPLOY_PATH/server" -- run start
             pm2 restart unico-implantacao-worker --update-env || pm2 start npm --name unico-implantacao-worker --cwd "$DEPLOY_PATH/server" -- run start:worker
             pm2 save
 
             curl --fail --silent --show-error --retry 5 --retry-connrefused "http://127.0.0.1:$API_PORT/health"
-            curl --fail --silent --show-error --retry 5 --retry-connrefused --head "http://127.0.0.1:$WEB_PORT/"
