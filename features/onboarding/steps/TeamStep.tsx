@@ -50,11 +50,18 @@ export function TeamStep({
   const [editingPauseId, setEditingPauseId] = useState<string | null>(null);
 
   const counts = countUsersByRole(data.users);
+  // Perfis sem nenhuma vaga no plano não são uma alternativa válida para o
+  // cliente — por exemplo, Administrador quando a única vaga é a conta
+  // técnica padrão que já vem na instância.
+  const availableRoles = ROLE_ORDER.filter((role) => !userQuotas || userQuotas[role] > 0);
+  const selectedDraftRole = availableRoles.includes(draftRole)
+    ? draftRole
+    : (availableRoles[0] ?? "atendente");
   const hasRoom = (role: UserRole) => !userQuotas || counts[role] < userQuotas[role];
-  const canAddAnyUser = ROLE_ORDER.some(hasRoom);
+  const canAddAnyUser = availableRoles.some(hasRoom);
 
   function openCreateDialog() {
-    if (!hasRoom(draftRole)) return;
+    if (!hasRoom(selectedDraftRole)) return;
     setEditingUser(null);
     setDialogOpen(true);
   }
@@ -115,7 +122,7 @@ export function TeamStep({
 
         <header className="mx-auto w-full">{userQuotas ? (
           <div className="mb-4 flex flex-wrap justify-center gap-2">
-            {ROLE_ORDER.map((role) => {
+            {availableRoles.map((role) => {
               const atLimit = counts[role] >= userQuotas[role];
               return (
                 <span
@@ -139,12 +146,12 @@ export function TeamStep({
 
         <div className="grid gap-3 sm:grid-cols-[180px_1fr_auto] sm:items-end">
           <Field label="Cargo">
-            <Select value={draftRole} onValueChange={(value) => setDraftRole(value as UserRole)}>
+            <Select value={selectedDraftRole} onValueChange={(value) => setDraftRole(value as UserRole)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {ROLE_ORDER.map((role) => {
+                {availableRoles.map((role) => {
                   const disabled = !hasRoom(role);
                   return (
                     <SelectItem key={role} value={role} disabled={disabled}>
@@ -171,7 +178,7 @@ export function TeamStep({
             type="button"
             variant="accent"
             onClick={openCreateDialog}
-            disabled={!hasRoom(draftRole)}
+            disabled={!hasRoom(selectedDraftRole)}
             className="h-[50px] justify-self-start px-6 py-0 text-sm"
           >
             + Adicionar
@@ -242,7 +249,7 @@ export function TeamStep({
           onOpenChange={setDialogOpen}
           editingUser={editingUser}
           initialName={draftName.trim()}
-          initialRole={draftRole}
+          initialRole={selectedDraftRole}
           queues={queues}
           userQuotas={userQuotas}
           roleCounts={counts}

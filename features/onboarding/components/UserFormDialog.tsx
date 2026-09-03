@@ -100,6 +100,12 @@ export function UserFormDialog({
     return true;
   }
 
+  // Não exibir perfil que o plano não disponibiliza ao cliente. O perfil
+  // atual continua visível apenas ao editar um registro legado já salvo.
+  const availableRoles = ROLE_ORDER.filter(
+    (role) => !userQuotas || userQuotas[role] > 0 || role === draft?.role,
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -130,7 +136,7 @@ export function UserFormDialog({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {ROLE_ORDER.map((role) => {
+                    {availableRoles.map((role) => {
                       const disabled = role !== draft.role && !hasRoom(role);
                       return (
                         <SelectItem key={role} value={role} disabled={disabled}>
