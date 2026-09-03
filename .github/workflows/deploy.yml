@@ -67,6 +67,23 @@ jobs:
             EOF
             fi
 
+            # Não disputa portas com outros projetos já instalados no host.
+            # A primeira porta livre é persistida em .env.compose e reutilizada
+            # em todos os deploys seguintes.
+            first_free_port() {
+              PORT_CANDIDATE="$1"
+              while ss -ltn "sport = :$PORT_CANDIDATE" | grep -q LISTEN; do
+                PORT_CANDIDATE=$((PORT_CANDIDATE + 1))
+              done
+              printf '%s' "$PORT_CANDIDATE"
+            }
+            if ! grep -q '^POSTGRES_PORT=' .env.compose; then
+              printf 'POSTGRES_PORT=%s\n' "$(first_free_port 5433)" >> .env.compose
+            fi
+            if ! grep -q '^REDIS_PORT=' .env.compose; then
+              printf 'REDIS_PORT=%s\n' "$(first_free_port 6379)" >> .env.compose
+            fi
+
             set -a
             . ./.env.compose
             set +a
@@ -75,9 +92,9 @@ jobs:
             # aparecer no bundle do frontend nem nos logs do Actions.
             sed -i '/^DATABASE_URL=/d; /^REDIS_URL=/d; /^FRONTEND_URL=/d' server/.env
             {
-              printf 'DATABASE_URL=postgresql://%s:%s@127.0.0.1:5433/%s?schema=public\n' \
-                "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_DB"
-              printf 'REDIS_URL=redis://:%s@127.0.0.1:6379\n' "$REDIS_PASSWORD"
+              printf 'DATABASE_URL=postgresql://%s:%s@127.0.0.1:%s/%s?schema=public\n' \
+                "$POSTGRES_USER" "$POSTGRES_PASSWORD" "$POSTGRES_PORT" "$POSTGRES_DB"
+              printf 'REDIS_URL=redis://:%s@127.0.0.1:%s\n' "$REDIS_PASSWORD" "$REDIS_PORT"
               printf 'FRONTEND_URL=http://%s:3000\n' "${{ secrets.DEPLOY_HOST }}"
             } >> server/.env
 
