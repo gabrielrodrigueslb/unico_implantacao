@@ -1,0 +1,10 @@
+export { AtenderBemClient, type AtenderBemClientConfig } from "./atender-bem.client";
+export * from "./atender-bem.errors";
+export * as queues from "./queues";
+export * as businessHours from "./business-hours";
+export * as users from "./users";
+export * as userQueues from "./user-queues";
+export * as ura from "./ura";
+export * as tags from "./tags";
+export * as quickReplies from "./quick-replies";
+export * as defaults from "./defaults";

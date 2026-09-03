@@ -1,0 +1,295 @@
+{
+  "contactTags": [
+    {
+      "name": "ANSIEDADE💊",
+      "bgcolor": "#C6265C",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "ANTIDEPRESSIVOS💊",
+      "bgcolor": "#4B4453",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "APARELHO RESPIRATÓRIO(ASMA, BRONQUITE, SINUSITE)💊",
+      "bgcolor": "#00C9A7",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "DERMOCOSMETICOS💊",
+      "bgcolor": "#F9F871",
+      "fgcolor": "#333"
+    },
+    {
+      "name": "DIABÉTICO💊",
+      "bgcolor": "#9B3B7F",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "DOENÇAS DOS OSSOS(ARTROSE, ARTRITE)💊",
+      "bgcolor": "#845EC2",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "EM TRATAMENTO💊",
+      "bgcolor": "#ce9b00",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "FRALDAS💊",
+      "bgcolor": "#0089BA",
+      "fgcolor": "#444"
+    },
+    {
+      "name": "GESTANTE 🤰",
+      "bgcolor": "#ce007f",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "HIPERTENSO💊",
+      "bgcolor": "#c63100",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "HOMEM ♂️",
+      "bgcolor": "#1458ea",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "IDOSO 👵👴",
+      "bgcolor": "#06c270",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "INFANTIL 🧸",
+      "bgcolor": "#ffce3a",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "INSÔNIA💊",
+      "bgcolor": "#d9bfff",
+      "fgcolor": "#333"
+    },
+    {
+      "name": "INSUFICIENTE RENAL💊",
+      "bgcolor": "#4b0097",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "INTOLERANTE A LACTOSE💊",
+      "bgcolor": "#ff3b3b",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "MULHER ♀️",
+      "bgcolor": "#ff9399",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "PÓS CIRÚRGICO💊",
+      "bgcolor": "#8b0007",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "POSSUI CONVÊNIO💊",
+      "bgcolor": "#fff",
+      "fgcolor": "#333"
+    },
+    {
+      "name": "SISTEMA CARDIOVASCULAR💊",
+      "bgcolor": "#00752b",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "TESTES DE GLICOSE E TIRAS💊",
+      "bgcolor": "#ff9399",
+      "fgcolor": "#333"
+    },
+    {
+      "name": "TIREÓIDE💊",
+      "bgcolor": "#5bd1cd",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "USO CONTÍNUO💊",
+      "bgcolor": "#000",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "VACINAS💉",
+      "bgcolor": "#25615f",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "VITAMINAS E MINERAIS💊",
+      "bgcolor": "#384E76",
+      "fgcolor": "#fff"
+    }
+  ],
+  "chatTags": [
+    {
+      "name": "Aguardando Pagamento",
+      "color": "#BFE2FF-#333-#BFE2FF",
+      "description": "",
+      "marker": "💵",
+      "priority": 3
+    },
+    {
+      "name": "Aguardando Retorno",
+      "color": "#FFCE3A-#FFF-#FFCE3A",
+      "description": "Do cliente em relação ao pedido",
+      "marker": "💵",
+      "priority": 0
+    },
+    {
+      "name": "Aguardando Transferência",
+      "color": "#29BDFF-#FFF-#29BDFF",
+      "description": "",
+      "marker": "💸",
+      "priority": 3
+    },
+    {
+      "name": "Atenção neste Atendimento",
+      "color": "#FC331C-#FFF-#E7351F",
+      "description": "Atenção ao realizar esse atendimento",
+      "marker": "✨",
+      "priority": 3
+    },
+    {
+      "name": "B.O - A Resolver",
+      "color": "#FFA486-#333-#FFA486",
+      "description": "Algo a Resolver",
+      "marker": "🤢",
+      "priority": 3
+    },
+    {
+      "name": "Cliente Impaciente",
+      "color": "#A071F2-#FFF-#956CE0",
+      "description": "",
+      "marker": "🖋️",
+      "priority": 3
+    },
+    {
+      "name": "CLIENTE INATIVO",
+      "color": "#FFFFFF-#3D474D-#E7351F",
+      "description": "",
+      "marker": "❗",
+      "priority": 0
+    },
+    {
+      "name": "Cliente respondido",
+      "color": "#00752B-#FFF-#00752B",
+      "description": "",
+      "marker": "🟢",
+      "priority": 0
+    },
+    {
+      "name": "Esperando Foto Receita",
+      "color": "#3d474d-#fff-#3c464c",
+      "description": "",
+      "marker": "🚫",
+      "priority": 1
+    },
+    {
+      "name": "Esperando Localização",
+      "color": "#9400D3-#FFF-#9400D3",
+      "description": "",
+      "marker": "🖨️",
+      "priority": 1
+    },
+    {
+      "name": "Ligar para o Cliente",
+      "color": "#9400D3-#FFF-#9400D3",
+      "description": "",
+      "marker": "💵",
+      "priority": 0
+    },
+    {
+      "name": "NF-e Aguardando",
+      "color": "#480097-#FFF-#480097",
+      "description": "",
+      "marker": "💵",
+      "priority": 0
+    },
+    {
+      "name": "Orçamento Feito",
+      "color": "#73FEBA-#333-#73FEBA",
+      "description": "",
+      "marker": "💵",
+      "priority": 1
+    },
+    {
+      "name": "Troca de Produto",
+      "color": "#F8F0FF-#333-#D98FFF",
+      "description": "Produtos para troca",
+      "marker": "🤮",
+      "priority": 3
+    }
+  ],
+  "quickReplies": [
+    {
+      "shortcut": "Saudação",
+      "message": "!Saudacao! eu sou !nome!, como posso te ajudar?"
+    },
+    {
+      "shortcut": "Pós Venda",
+      "message": "Olá #, passando para lembrar que você só tem 5 comprimidos do # , como a responsabilidade da # é cuidar da sua saúde , você acha melhor retirar na loja ou que entregue? Caso seja entrega por favor confirme o endereço e forma de pagamento💊"
+    },
+    {
+      "shortcut": "Nome completo",
+      "message": "Por favor, informe seu nome completo."
+    },
+    {
+      "shortcut": "Endereço",
+      "message": "Qual é o seu endereço atual?"
+    },
+    {
+      "shortcut": "Nome do medicamento",
+      "message": "Para melhor atendê-lo, por favor, nos informe o nome do medicamento que você está procurando."
+    },
+    {
+      "shortcut": "Verificar estoque",
+      "message": "Precisamos verificar se o medicamento que você precisa está em estoque. Qual é a quantidade necessária?"
+    },
+    {
+      "shortcut": "Gostaria de receber ou retirar?",
+      "message": "Você gostaria de receber o medicamento em sua casa ou prefere retirá-lo na loja?"
+    },
+    {
+      "shortcut": "Forma de pagamento",
+      "message": "Em qual modo de pagamento você prefere realizar uma compra? Temos opções de dinheiro, cartão de crédito e débito ou pix."
+    },
+    {
+      "shortcut": "Você possui prescrição médica?",
+      "message": "O medicamento solicitado requer uma prescrição médica. Você possui uma receita válida para este medicamento?"
+    },
+    {
+      "shortcut": "Orientação para uso",
+      "message": "Nosso objetivo é fornecer um atendimento de qualidade. Por favor, lembramos que é importante sempre seguir as instruções de uso dos medicamentos. Se precisar de orientação, conte conosco."
+    },
+    {
+      "shortcut": "Pedido pronto para retirada",
+      "message": "Seu pedido está pronto para retirada. Por favor, dirija-se à nossa loja com uma cópia da receita médica."
+    },
+    {
+      "shortcut": "Reações adversas",
+      "message": "Se você tiver alguma reação adversa ao medicamento, entre em contato conosco imediatamente ou procure um médico."
+    },
+    {
+      "shortcut": "Pedido recebido com sucesso",
+      "message": "Seu pedido foi recebido com sucesso. Em breve, entraremos em contato para confirmar os detalhes da entrega/retirada."
+    },
+    {
+      "shortcut": "Mais informações",
+      "message": "Se você tiver alguma dúvida ou precisar de mais informações, fique à vontade para perguntar. Estamos aqui para ajudar!"
+    },
+    {
+      "shortcut": "Solicitação de CPF",
+      "message": "Por favor, informe seu CPF para verificarmos seu cadastro em nosso sistema."
+    },
+    {
+      "shortcut": "Validade de receita médica",
+      "message": "Lembramos que a validade de uma receita médica varia de acordo com a legislação vigente. Por favor, verifique se sua receita ainda está dentro do prazo válido. ."
+    }
+  ]
+}

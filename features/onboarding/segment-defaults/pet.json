@@ -1,0 +1,216 @@
+{
+  "contactTags": [
+    {
+      "name": "ADULTO 🐾",
+      "bgcolor": "#ce9b00",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "AGITADO 🌀",
+      "bgcolor": "#ffe79f",
+      "fgcolor": "#333"
+    },
+    {
+      "name": "BRAVO ⚠️",
+      "bgcolor": "#c63100",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "CACHORRO 🐶",
+      "bgcolor": "#1458ea",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "CASTRADO 🐕‍🦺",
+      "bgcolor": "#ce007f",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "CUIDADOS PET ❤️",
+      "bgcolor": "#ff784b",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "FÊMEA ♀️",
+      "bgcolor": "#ff9dbb",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "FILHOTE 🧸",
+      "bgcolor": "#ff9399",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "GATO 😺",
+      "bgcolor": "#ff3c78",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "MACHO ♂️",
+      "bgcolor": "#4b0097",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "MEDICAMENTOS PET 💊",
+      "bgcolor": "#e8ffff",
+      "fgcolor": "#333"
+    },
+    {
+      "name": "NÃO CASTRADO 🦮",
+      "bgcolor": "#29bdff",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "PÁSSARO 🐦",
+      "bgcolor": "#00752b",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "PÊLO CURTO 🐶",
+      "bgcolor": "#73feba",
+      "fgcolor": "#333"
+    },
+    {
+      "name": "PÊLO LONGO 🐶",
+      "bgcolor": "#ff9dbb",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "PÊLO MÉDIO 🐶",
+      "bgcolor": "#d9bfff",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "PORTE ALTO 🔊",
+      "bgcolor": "#c63100",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "PORTE MÉDIO 🫡",
+      "bgcolor": "#ffce3a",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "PORTE PEQUENO 🤏",
+      "bgcolor": "#06c270",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "RAÇÃO COMUM 🥜",
+      "bgcolor": "#fff1f0",
+      "fgcolor": "#333"
+    },
+    {
+      "name": "RAÇÃO PREMIUM ✨",
+      "bgcolor": "#5bd1cd",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "ROEDOR 🐀",
+      "bgcolor": "#9400d3",
+      "fgcolor": "#fff"
+    },
+    {
+      "name": "SÊNIOR 🐺",
+      "bgcolor": "#ff3b3b",
+      "fgcolor": "#fff"
+    }
+  ],
+  "chatTags": [
+    {
+      "name": "Aguardando confirmação",
+      "color": "#FFFFFF-#3D474D-#45C13E",
+      "description": "",
+      "marker": "🖋️",
+      "priority": 2
+    },
+    {
+      "name": "Aguardando forma pag",
+      "color": "#DCFFEE-#333-#73FEBA",
+      "description": "Sem descrição",
+      "marker": "💵",
+      "priority": 0
+    },
+    {
+      "name": "Aguardando info pet",
+      "color": "#FF3C78-#FFF-#FF3C78",
+      "description": "Informações sobre o pet que será agendado o serviço",
+      "marker": "🐶",
+      "priority": 0
+    },
+    {
+      "name": "Aguardando pix",
+      "color": "#06C270-#FFF-#06C270",
+      "description": "Sem descrição",
+      "marker": "💸",
+      "priority": 0
+    },
+    {
+      "name": "Atenção Vet",
+      "color": "#FC331C-#FFF-#E7351F",
+      "description": "Animal precisando de atenção veterinária",
+      "marker": "🤢",
+      "priority": 3
+    },
+    {
+      "name": "Confirmação banho",
+      "color": "#29BDFF-#FFF-#29BDFF",
+      "description": "Sem descrição",
+      "marker": "⚠️",
+      "priority": 0
+    },
+    {
+      "name": "Confirmação de consulta",
+      "color": "#FED629-#FFF-#E9C62B",
+      "description": "Sem descrição",
+      "marker": "⚠️",
+      "priority": 0
+    },
+    {
+      "name": "Confirmação de vacina",
+      "color": "#FFFFFF-#3D474D-#E9C62B",
+      "description": "",
+      "marker": "🖨️",
+      "priority": 2
+    },
+    {
+      "name": "Entrega Pendente",
+      "color": "#8E8E8E-#FFF-#8E8E8E",
+      "description": "Sem descrição",
+      "marker": "🚩",
+      "priority": 0
+    },
+    {
+      "name": "Plano de saúde",
+      "color": "#FFFFFF-#3D474D-#1B9DEC",
+      "description": "",
+      "marker": "📄",
+      "priority": 2
+    },
+    {
+      "name": "Retirada em loja",
+      "color": "#FDAA07-#FFF-#E89F0D",
+      "description": "Sem descrição",
+      "marker": "🚩",
+      "priority": 0
+    }
+  ],
+  "quickReplies": [
+    {
+      "shortcut": "Casa de Ração",
+      "message": "Ração:\n!Saudacao!, tudo bem? Eu sou !nome! e estou passando para te lembrar sobre a ração do seu amiguinho, vi aqui que da última vez comprou conosco a opção (xxxxx), estamos tendo ela nas opções de (xxx)kg á R$(xxx) ou (xxxx)kg á R$ (xxxx), qual delas te atenderia melhor nesse momento?\nRação Premium:\nBom, essa opção de ração escolhida, se trata de uma ração tradicional, gostaria de conhecer nossas opções premium e super premium, elas possuem uma série de benefícios para o seu amiguinho, como por exemplo:\n*Custo benefício: Basicamente, essas rações, por serem muito mais nutritivas e com um melhor balanceamento, saciam a fome e nutrem o pet com uma menor quantidade em comparação às outras categorias. Logo, a quantidade diária que você oferece para o seu pet é menor. Assim, o pacote que você comprou dura por mais tempo!\n*Nutrientes: Rações de melhor qualidade possuem Ômegas 3 e 6, que ajudam a manter pelos e pele saudáveis, além de contribuírem para a capacidade cognitiva, Condroitina e glucosamina, que auxiliam na saúde das articulações, Probióticos e prebióticos, que ajudam a manter a saúde intestinal em dia.\nEstes são somente alguns dos muitos benefícios que uma ração melhor pode trazer ao seu amigo peludo, gostaria de realizar uma alteração na ração escolhida?\nCliente escolheu uma ração premium ou super premium:\nMeus parabéns pela sua escolha, tenho certeza que seu amiguinho irá ficar muito feliz e saudável ao lado de um tutor tão responsável\nPetisco\nGostaria de um petisco para o seu amiguinho? Oferecer um petisco é ótimo para realizar o reforço positivo quando o animal aprendeu algo novo ou fez alguma atividade correta.\nE podem ser utilizados também como enriquecimento ambiental, hoje nossa opção mais escolhida é a da marca (xxxx) que sai á R$(xxxxxx)."
+    },
+    {
+      "shortcut": "Banho e Tosa",
+      "message": "Agendamento de banho:\n!Saudacao!, tudo bem?\nPara agendar o banho do seu amiguinho, preciso de algumas informações:\n*Nome do seu pet\n*Porte\n*Raça (Caso não tenha é só informar como SRD)\n*Data e hora desejada\n*Nome e numero do tutor responsável\nPerfume:\nComo alguns animaizinhos tem uma sensibilidade maior á fortes odores, optamos por perguntar aos tutores, no caso do seu amiguinho podemos passar perfume após o banho?\nPacote Hidratação:\nPara deixar o pelo do seu amiguinho ainda mais hidratado e brilhante, temos o pacote de hidratação, que tem um adicional de R$(xxx) ao banho, teria interesse em adicionar esse mimo ao banho do seu peludinho?\nValores tosa:\nTosa Higiênica: R$(xxxx)\nTosa na Tesoura: R$(xxxxx)\nTosa na Maquina: R$(xxxxx)\nTaxa de deslocamento:\nQual seria o seu endereço?\nCaso não possa trazer seu amiguinho ao Pet, podemos buscá-lo por uma taxa de R$(xxxx)\nPacote mensal de Banho:\nNosso pacote mensal consiste em 4 banhos comuns mensais, horário e data reservada exclusivamente para seu pet por apenas R$(xxxx)"
+    },
+    {
+      "shortcut": "Clínica",
+      "message": "Confirmação de consulta:\n!Saudacao! tudo bem? Me chamo !nome! e estou passando para confirmar o agendamento de seu amiguinho conosco:\nData: (00/00/2023)\nHora: 00:00\nProcedimento: (xxxxxxxxx)\nAnimal: (xxxxx)\nQuais vacinas um cachorro precisa tomar durante a vida?\nVocê já sabe quais vacinas o seu cachorrinho precisa tomar para estar seguro e protegido?\n*V8 ou V10\n1ª dose: A partir de 6 semanas\n2ª dose: 4 semanas após a 1ª dose\n3ª dose: 4 semanas após a 2ª dose\nDose de reforço (todos os anos): 1 ano após a última dose\n*Gripe Canina\n1ª dose: A partir de 8 semanas\n2ª dose: 2 a 4 semanas após a 1ª dose\nDose de reforço (todos os anos): 1 ano após a última dose\n*Giárdia\n1ª dose: A partir de 8 semanas\n2ª dose: 2 a 4 semanas após a 1ª dose\nDose de reforço (todos os anos): 1 ano após a última dose\n*Antirrábica\n1ª dose: A partir de 12 semanas\nDose de reforço (todos os anos): 1 ano após a última dose\n*Leishmaniose\n1ª dose: A partir de 4 meses\n2ª dose: 21 dias após a 1ª dose\n3ª dose: 21 dias após a 2ª dose\nDose de reforço (todos os anos): 1 ano após a última dose\nCaso seu cãozinho tenha alguma vacina pendente conte conosco para ajudar a protegê-lo ainda mais!\nQuais vacinas um gato precisa tomar durante a vida?\nVocê já sabe quais vacinas o seu gatinho precisa tomar para estar seguro e protegido?\n*V3, V4 ou V5\n1ª dose: 60 dias\n2ª dose: 90 dias\nDose de reforço (todos os anos): 1 ano após a última dose\n*FeLV\n1ª dose: 85 dias\n2ª dose: 105 dias\nDose de reforço (todos os anos): 1 ano após a última dose\n*Antirrábica\n1ª dose: 120 dias\nDose de reforço (todos os anos): 1 ano após a última dose\nCaso seu gatinho tenha alguma vacina pendente conte conosco para ajudar a protegê-lo ainda mais!\nImportância da castração em cachorros machos:\n*Porque devemos castrar os machos?*\n1 - Evita fugas.\n2 - Evita o constrangimento de cães “agarrando” em pernas ou braços de visitas.\n3 - Evita a marcação do território (xixi fora do lugar).\n4 - Evita a agressividade motivada por excitação sexual constante.\n5 - Evita tumores testiculares.\n6 - Evita o aumento do número de animais de rua.\nImportância da castração em cachorros fêmeas\n*Porque devemos castrar as fêmeas?*\n1- Evita acasalamentos indesejáveis, principalmente quando se tem um casal de animais de estimação.\n2 - Evita o cancro nas glândulas mamárias na fase adulta.\n3 - Evita Piometra (grave infecção uterina) em fêmeas adultas.\n4 - Evita as “gravidezes psicológicas” e suas consequências como infecção das tetas.\n5 - Evita cios.\n6 - Evita o aumento do número de animais de rua.\nImportância da castração em gatos machos:\n*Porque devemos castrar os machos?*\n1 - Evita fugas.\n2 - Evita a marcação do território (xixi fora do lugar).\n3 - Evita a agressividade motivada por excitação sexual constante.\n4 - Evita tumores testiculares.\n5 - Evita o aumento do número de animais de rua.\nImportância da castração em gatos fêmeas\n*Porque devemos castrar as fêmeas?*\n1- Evita acasalamentos indesejáveis, principalmente quando se tem um casal de animais de estimação.\n2 - Evita o cancro nas glândulas mamárias na fase adulta.\n3 - Evita Piometra (grave infecção uterina) em fêmeas adultas.\n4 - Evita as “gravidezes psicológicas” e suas consequências como infecção das tetas.\n5 - Evita cios.\n6 - Evita o aumento do número de animais de rua."
+    },
+    {
+      "shortcut": "Hotelzinho/Creche",
+      "message": "O que é o serviço de Hospedagem pet?\nNa hospedagem pet iremos cuidar do seu animalzinho enquanto você não pode estar com ele, alguns benefícios que podemos listar são:\n*Socialização entre animais;\n*Diminuição da Ansiedade de separação;\n*Ajuda seu amiguinho a gastar energia;\n*Garante mais comodidade ao seu pet;\n*Tranquilidade e segurança de um ambiente pensado para o seu peludinho;\nRegras para a Hospedagem\nPara garantir segurança para todos os hóspedes, temos algumas regras que precisam ser seguidas:\n*Cartão de vacina em dia;\n*O animal precisa ser dócil com outros animais;\n*Animal devidamente vermifugado;\n*Animais que apresentam alergias severas, lesões de pele, machucados ou qualquer doença aparente, deverão passar primeiro por um veterinário;\n*Animais com pulgas e carrapatos não serão aceitos;\n*A administração de medicamentos orais ou locais deverá ser solicitado por escrito, assim como a orientação de horários e dosagem também deve ser feito por escrito;\n*Respeitar os horários de check in e check out previamente combinados;"
+    }
+  ]
+}

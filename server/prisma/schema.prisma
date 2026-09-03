@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  /// Gerencia outros usuários administrativos (CRUD em /users) além de tudo
+  /// que MEMBER pode fazer.
+  ADMIN
+  /// Acesso operacional normal ao painel — sem gestão de usuários.
+  MEMBER
+}
+
+/// Conta de acesso ao painel administrativo (equipe Único) — não confundir
+/// com os usuários criados dentro da instância do Atender Bem do cliente
+/// (esses são `UserDraft`/`sipuser` só no fluxo de onboarding, sem tabela
+/// própria aqui).
+model AdminUser {
+  id           String    @id @default(cuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         AdminRole @default(MEMBER)
+  /// Desativar em vez de apagar preserva o rastro de quem aprovou/editou o
+  /// quê no histórico de implantações.
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  /// Implantações em que esta pessoa é a implantadora — ver campo
+  /// `implanterId` em Implantation (distinto de `responsibleUserId`, que é
+  /// quem criou/tem acesso ao registro).
+  implantationsImplanted Implantation[] @relation("ImplantationImplanter")
+}
+
+/// Registro de auditoria de ações relevantes no painel (criar/aprovar/
+/// cancelar implantação, gestão de usuários, login etc.) — alimenta a aba
+/// "Atividade" de cada implantação e a busca global de auditoria.
+/// `actorId`/`actorName` são uma cópia solta (sem FK) de propósito: o log
+/// precisa sobreviver a uma conta de admin apagada depois.
+model AuditLog {
+  id         String   @id @default(cuid())
+  /// Nulo para ações do próprio sistema (worker), sem sessão de painel por trás.
+  actorId    String?
+  actorName  String
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+enum ImplantationStatus {
+  ONBOARDING_PENDING
+  ONBOARDING_IN_PROGRESS
+  WAITING_REVIEW
+  APPROVED
+  QUEUED
+  RUNNING
+  PARTIALLY_FAILED
+  FAILED
+  COMPLETED
+  CANCELLED
+}
+
+model Implantation {
+  id                String             @id @default(cuid())
+  /// Opcional — não é necessário para criar o link de onboarding, só o
+  /// endereço da instância é obrigatório. Preenchido pelo cliente durante o
+  /// onboarding (razão social/nome fantasia) se não vier definido aqui.
+  companyName       String?
+  /// Só dígitos (14), sem máscara — normalizado em instance-url.ts/service
+  /// para a busca funcionar independente de como foi digitado.
+  cnpj              String?
+  instanceName      String
+  instanceBaseUrl   String
+  responsibleUserId String?
+  /// Quem de fato executou/conduziu a implantação — distinto de
+  /// `responsibleUserId` (quem criou o registro). Preenchido manualmente,
+  /// pode ser ajustado a qualquer momento pela equipe.
+  implanterId       String?
+  implanter         AdminUser?         @relation("ImplantationImplanter", fields: [implanterId], references: [id])
+  status            ImplantationStatus @default(ONBOARDING_PENDING)
+  onboardingToken   String             @unique @default(uuid())
+  /// Credencial pública de curta duração; links antigos são recusados.
+  onboardingTokenExpiresAt DateTime?
+  onboardingTokenRevokedAt DateTime?
+
+  /// Snapshot do plano do Atender Bem escolhido na criação (via
+  /// partner/getAllAvailablePlans) — usado para limitar quantos usuários de
+  /// cada tipo o cliente pode cadastrar na etapa de equipe do onboarding.
+  /// Guardamos os valores já resolvidos (e não só o id) para não depender de
+  /// uma nova chamada à API do Atender Bem toda vez que a tela de onboarding
+  /// carrega, e para não quebrar caso o plano mude de nome/limites depois.
+  planId           Int?
+  planName         String?
+  agentQuota       Int?
+  supervisorQuota  Int?
+  adminQuota       Int?
+
+  /// Conta de serviço dedicada exclusivamente à automação desta instância
+  /// (não é o usuário de nenhum atendente real). Senha e segredo TOTP ficam
+  /// cifrados em repouso — ver server/src/lib/crypto.ts.
+  serviceUsername            String?
+  servicePasswordEncrypted   String?
+  serviceTotpSecretEncrypted String?
+
+  onboarding          Onboarding?
+  deploymentSnapshots DeploymentSnapshot[]
+  deploymentRuns      DeploymentRun[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  completedAt         DateTime?
+
+  // Suportam a listagem paginada/filtrada em implantation.service.ts (list)
+  // sem precisar varrer a tabela inteira conforme o volume de implantações
+  // cresce.
+  @@index([status])
+  @@index([createdAt])
+  @@index([cnpj])
+  @@index([companyName])
+  @@index([instanceName])
+  @@index([implanterId])
+}
+
+model Onboarding {
+  id                String       @id @default(cuid())
+  implantationId    String       @unique
+  implantation      Implantation @relation(fields: [implantationId], references: [id])
+  currentStep       String?
+  responses         Json         @default("{}")
+  reviewedResponses Json?
+  startedAt         DateTime?
+  lastSavedAt       DateTime?
+  submittedAt       DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model DeploymentSnapshot {
+  id             String          @id @default(cuid())
+  implantationId String
+  implantation   Implantation    @relation(fields: [implantationId], references: [id])
+  version        Int
+  payload        Json
+  approvedBy     String
+  approvedAt     DateTime        @default(now())
+  createdAt      DateTime        @default(now())
+  deploymentRuns DeploymentRun[]
+
+  @@unique([implantationId, version])
+}
+
+enum DeploymentRunStatus {
+  RUNNING
+  PARTIALLY_FAILED
+  FAILED
+  COMPLETED
+}
+
+enum DeploymentJobType {
+  CONFIGURE_QUEUES
+  CREATE_USERS
+  ASSIGN_USERS_TO_QUEUES
+  CONFIGURE_IVR
+  CREATE_CONTACT_TAGS
+  CREATE_CHAT_TAGS
+  CREATE_QUICK_REPLIES
+}
+
+enum DeploymentJobStatus {
+  PENDING
+  QUEUED
+  RUNNING
+  SUCCESS
+  FAILED
+  SKIPPED
+}
+
+model DeploymentRun {
+  id             String              @id @default(cuid())
+  implantationId String
+  implantation   Implantation        @relation(fields: [implantationId], references: [id])
+  snapshotId     String
+  snapshot       DeploymentSnapshot  @relation(fields: [snapshotId], references: [id])
+  status         DeploymentRunStatus @default(RUNNING)
+  startedAt      DateTime            @default(now())
+  completedAt    DateTime?
+  createdAt      DateTime            @default(now())
+  jobs           DeploymentJob[]
+}
+
+model DeploymentJob {
+  id                 String              @id @default(cuid())
+  deploymentRunId    String
+  deploymentRun      DeploymentRun       @relation(fields: [deploymentRunId], references: [id])
+  type               DeploymentJobType
+  status             DeploymentJobStatus @default(PENDING)
+  attempts           Int                 @default(0)
+  startedAt          DateTime?
+  finishedAt         DateTime?
+  error              String?
+  externalResourceId String?
+  /// Resultado estruturado do processor (ids criados, correlação nome→id
+  /// etc.). Nunca deve conter segredos — ver AtenderBemClient.
+  metadata           Json?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@unique([deploymentRunId, type])
+}
