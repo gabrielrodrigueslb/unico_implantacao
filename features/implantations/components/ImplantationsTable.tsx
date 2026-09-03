@@ -133,6 +133,7 @@ export function ImplantationsTable({ implantations }: { implantations: Implantat
                         <Link
                           href={onboardingLink(implantation.onboardingToken)}
                           target="_blank"
+                          rel="noopener noreferrer"
                         />
                       }
                     >
