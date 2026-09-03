@@ -61,7 +61,7 @@ function toPersistedCredentials<
 }
 
 async function create(data: CreateImplantationInput, actor: Actor) {
-  const { instanceUrl, planId, ...rest } = data;
+  const { instanceUrl, planId, agentQuota, supervisorQuota, adminQuota, ...rest } = data;
 
   let instanceName: string;
   let instanceBaseUrl: string;
@@ -86,9 +86,11 @@ async function create(data: CreateImplantationInput, actor: Actor) {
       instanceBaseUrl,
       planId: plan.id,
       planName: plan.name,
-      agentQuota: plan.chatagents,
-      supervisorQuota: plan.supervisors,
-      adminQuota: plan.monitoringagents,
+      // Os três limites vêm do plano por padrão, mas o implantador pode
+      // sobrescrever cada um na criação do link (ver CreateImplantationSheet.tsx).
+      agentQuota: agentQuota ?? plan.chatagents,
+      supervisorQuota: supervisorQuota ?? plan.supervisors,
+      adminQuota: adminQuota ?? plan.monitoringagents,
       status: "ONBOARDING_PENDING",
       onboardingTokenExpiresAt: onboardingTokenExpiresAt(),
     },

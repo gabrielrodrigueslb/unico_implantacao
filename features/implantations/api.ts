@@ -14,6 +14,10 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4
 export interface CreateImplantationInput {
   instanceUrl: string;
   planId: number;
+  /** Sobrescreve o limite do plano nesta implantação, se enviado. */
+  agentQuota?: number;
+  supervisorQuota?: number;
+  adminQuota?: number;
   companyName?: string;
   cnpj?: string;
 }
