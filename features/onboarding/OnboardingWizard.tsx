@@ -175,11 +175,15 @@ export function OnboardingWizard({
     (data.company.segment !== "generico" || data.company.otherSegmentLabel.trim() !== "");
   const isCompanyDetailsValid =
     data.company.legalName.trim() !== "" && data.company.contactEmail.trim() !== "";
+  const isServiceValid = data.service.queues.length > 0;
+  const isTeamValid = data.team.users.length > 0;
 
   const NEXT_DISABLED: Partial<Record<StepId, boolean>> = {
     companyContact: !isCompanyContactValid,
     companySegment: !isCompanySegmentValid,
     companyDetails: !isCompanyDetailsValid,
+    service: !isServiceValid,
+    team: !isTeamValid,
   };
 
   const copy = STEP_COPY[step];
