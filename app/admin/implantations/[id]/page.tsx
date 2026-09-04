@@ -82,7 +82,7 @@ export default async function ImplantationDetailPage({
                   variant="outline"
                   size="sm"
                   nativeButton={false}
-                  render={<Link href={implantation.instanceBaseUrl} target="_blank" />}
+                  render={<Link href={implantation.instanceBaseUrl} target="_blank" rel="noopener noreferrer" />}
                 >
                   <GlobeIcon />
                   Abrir instância
@@ -92,7 +92,7 @@ export default async function ImplantationDetailPage({
                   variant="outline"
                   size="sm"
                   nativeButton={false}
-                  render={<Link href={onboardingLink(implantation.onboardingToken)} target="_blank" />}
+                  render={<Link href={onboardingLink(implantation.onboardingToken)} target="_blank" rel="noopener noreferrer" />}
                 >
                   <ExternalLinkIcon />
                   Ver onboarding

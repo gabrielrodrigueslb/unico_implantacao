@@ -288,10 +288,19 @@ async function main() {
     "senha não aparece no resultado retornado",
     JSON.stringify(usersResult).includes("password") === false,
   );
+  const generatedPassword = usersResult.metadata?.generatedDefaultPassword as string | undefined;
   check(
-    "usuário novo recebeu a senha padrão da Unico (nenhuma foi definida no onboarding)",
+    "usuário novo recebeu senha gerada aleatoriamente (nenhuma foi definida no onboarding)",
+    typeof generatedPassword === "string" &&
+      /[A-Z]/.test(generatedPassword) &&
+      /[a-z]/.test(generatedPassword) &&
+      /\d/.test(generatedPassword) &&
+      /[^A-Za-z0-9]/.test(generatedPassword),
+  );
+  check(
+    "senha gerada foi de fato a aplicada ao usuário novo",
     (usersDb.find((u) => u.username === "novo@empresa.com") as { password: string }).password ===
-      "Unico@2026",
+      generatedPassword,
   );
   check(
     "CREATE_USERS aplica permissões operacionais ao criar e atualizar",

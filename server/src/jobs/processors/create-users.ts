@@ -1,3 +1,4 @@
+import { randomInt } from "node:crypto";
 import { z } from "zod";
 import { users } from "../../integrations/atender-bem";
 import { OPERATIONAL_USER_DEFAULTS } from "../../integrations/atender-bem/users";
@@ -29,8 +30,37 @@ function generateExtension(used: Set<string>): string {
 }
 
 // Decisão de produto: se o cliente não definir uma senha padrão própria no
-// onboarding, todo novo usuário nasce com esta senha e deve trocá-la depois.
-const UNICO_DEFAULT_PASSWORD = "Unico@2026";
+// onboarding, geramos uma senha aleatória por implantação (não mais uma
+// constante fixa no código — ver docs/security-audit) e devolvemos no
+// metadata da etapa, visível na aba "Atividade" só para quem já tem acesso
+// a esta implantação. O implantador repassa ao cliente por fora do código;
+// cada usuário deve trocá-la no primeiro login.
+const PASSWORD_CHARS = {
+  upper: "ABCDEFGHJKLMNPQRSTUVWXYZ",
+  lower: "abcdefghijkmnopqrstuvwxyz",
+  digit: "23456789",
+  symbol: "!@#$%*?",
+};
+
+function generateDefaultPassword(): string {
+  const pick = (chars: string) => chars[randomInt(chars.length)];
+  const all = Object.values(PASSWORD_CHARS).join("");
+  const required = [
+    pick(PASSWORD_CHARS.upper),
+    pick(PASSWORD_CHARS.lower),
+    pick(PASSWORD_CHARS.digit),
+    pick(PASSWORD_CHARS.symbol),
+  ];
+  const rest = Array.from({ length: 8 }, () => pick(all));
+  const chars = [...required, ...rest];
+  // Embaralha (Fisher-Yates) pra não deixar os 4 caracteres obrigatórios
+  // sempre nas primeiras posições.
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = randomInt(i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  return chars.join("");
+}
 
 const payloadSchema = z.object({
   team: z
@@ -59,10 +89,8 @@ export const createUsersProcessor: Processor = async ({ client, snapshotPayload 
     return { metadata: { users: [] } };
   }
 
-  const password =
-    team.usesCustomDefaultPassword && team.defaultPassword
-      ? team.defaultPassword
-      : UNICO_DEFAULT_PASSWORD;
+  const usesGeneratedPassword = !(team.usesCustomDefaultPassword && team.defaultPassword);
+  const password = usesGeneratedPassword ? generateDefaultPassword() : team.defaultPassword;
 
   // Idempotente: se o username já existir, não recria (e não mexe na senha).
   const existing = await users.listUsers(client);
@@ -108,5 +136,15 @@ export const createUsersProcessor: Processor = async ({ client, snapshotPayload 
     result.push({ username: user.username, id: created.id, created: true });
   }
 
-  return { metadata: { users: result } };
+  const anyCreated = result.some((user) => user.created);
+
+  return {
+    metadata: {
+      users: result,
+      // Só exposta quando de fato foi usada pra criar alguém nesta
+      // execução — vai para a aba "Atividade", visível a quem já tem
+      // acesso a esta implantação, pro implantador repassar ao cliente.
+      ...(usesGeneratedPassword && anyCreated ? { generatedDefaultPassword: password } : {}),
+    },
+  };
 };

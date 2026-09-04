@@ -1,6 +1,6 @@
 import type { AdminUser, Implantation, Prisma } from "@prisma/client";
 import { prisma } from "../../lib/prisma";
-import { AppError, NotFoundError } from "../../lib/errors";
+import { AppError, ForbiddenError, NotFoundError } from "../../lib/errors";
 import { encryptSecret } from "../../lib/crypto";
 import {
   clientAdminQuota,
@@ -210,6 +210,13 @@ async function getByIdForWorker(id: string) {
 
 async function update(id: string, data: UpdateImplantationInput, actor: Actor) {
   const before = await getById(id, actor);
+
+  // Reatribuir o dono da implantação é uma mudança de controle de acesso —
+  // só ADMIN pode fazer isso, mesmo que o MEMBER já tenha acesso ao recurso
+  // por ser o dono atual (ver lib/access-control.ts).
+  if (data.responsibleUserId !== undefined && actor.role !== "ADMIN") {
+    throw new ForbiddenError("Só administradores podem reatribuir o responsável pela implantação");
+  }
 
   const { implanterId, ...otherChanges } = data;
 
